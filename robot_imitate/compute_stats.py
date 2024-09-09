@@ -10,9 +10,6 @@ import os
 from pathlib import Path
 
 
-
-# DATA_DIR = Path(os.environ["DATA_DIR"]) if "DATA_DIR" in os.environ else None
-
 CODEBASE_VERSION = "v1.4"
 from typing import Dict
 
@@ -158,29 +155,6 @@ class LeRobotDataset(torch.utils.data.Dataset):
     @property
     def features(self) -> datasets.Features:
         return self.hf_dataset.features
-
-    # @property
-    # def camera_keys(self) -> list[str]:
-    #     """Keys to access image and video stream from cameras."""
-    #     keys = []
-    #     for key, feats in self.hf_dataset.features.items():
-    #         if isinstance(feats, (datasets.Image, VideoFrame)):
-    #             keys.append(key)
-    #     return None
-
-    # @property
-    # def video_frame_keys(self) -> list[str]:
-    #     """Keys to access video frames that requires to be decoded into images.
-
-    #     Note: It is empty if the dataset contains images only,
-    #     or equal to `self.cameras` if the dataset contains videos only,
-    #     or can even be a subset of `self.cameras` in a case of a mixed image/video dataset.
-    #     """
-    #     video_frame_keys = []
-    #     for key, feats in self.hf_dataset.features.items():
-    #         if isinstance(feats, VideoFrame):
-    #             video_frame_keys.append(key)
-    #     return video_frame_keys
 
     @property
     def num_samples(self) -> int:
@@ -521,14 +495,23 @@ def calculate_episode_data_index_for_custom_dataset(hf_dataset: datasets.Dataset
 
     return episode_data_index
 
+def main():
+    import argparse
+    parser = argparse.ArgumentParser(description='Compute stats')
+    parser.add_argument('--path', type=str, help='Data path')
+    parsed_args = parser.parse_args()
+    # print(parsed_args.path)
 
-if __name__ == "__main__":
-    print(f"Current working directory: {os.getcwd()}")
     
     repo_id = 'test'
     revision = 0 
-    # root='/home/marija/spes_autonomy/xarm_bringup/scripts/DATA_REAL/parquest_output/2024_08_21_20_10_53.parquet'
-    root = 'robot_imitate/data/2024_08_21_20_10_53.parquet'
+
+    # root = 'robot_imitate/data/2024_08_21_20_10_53.parquet'
+    root = parsed_args.path
+    print(root)
+    if root is None:
+        print('[ERROR] Must specified path to data!')
+        return
 
     hf_dataset = load_hf_dataset(repo_id, revision, root, 'train')
 
@@ -556,3 +539,7 @@ if __name__ == "__main__":
     save_meta_data(None, stats, episode_data_index, meta_data_dir)
 
     print(stats)
+
+
+if __name__ == "__main__":
+   main()

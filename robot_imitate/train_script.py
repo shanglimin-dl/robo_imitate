@@ -12,7 +12,6 @@ from PIL import Image as PILImage
 from torchvision import transforms
 from safetensors.torch import load_file
 
-# from lerobot.common.datasets.video_utils import VideoFrame
 from typing import Dict
 from dataclasses import dataclass, field
 import torch
@@ -1511,7 +1510,13 @@ class LeRobotDataset(torch.utils.data.Dataset):
 
 
 
-if __name__ == '__main__':
+def main(root):
+    print(root)
+    if root is None:
+        print('[ERROR] Must specified path to data!')
+        return
+    
+
     repo_id = 'test'
     from pathlib import Path
     import torch
@@ -1533,7 +1538,7 @@ if __name__ == '__main__':
         "observation.state": [-0.1, 0.0],
         "action": [-0.1, 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4],
     }
-    dataset = LeRobotDataset(repo_id, delta_timestamps=delta_timestamps, root='robot_imitate/data/2024_08_21_20_10_53.parquet')
+    dataset = LeRobotDataset(repo_id, delta_timestamps=delta_timestamps, root=root)
     print(dataset)
     print(dataset.hf_dataset)
     
@@ -1598,3 +1603,13 @@ if __name__ == '__main__':
 
     # Save a policy checkpoint.
     policy.save_pretrained(output_directory)
+
+
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description='Compute stats')
+    parser.add_argument('--path', type=str, help='Data path')
+    parsed_args = parser.parse_args()
+
+    main(parsed_args.path)
