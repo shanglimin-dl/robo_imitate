@@ -1,4 +1,4 @@
-Inside robo_imitate directory run follow commands:
+Inside `robo_imitate` directory run follow commands:
 
 ```sh 
 docker build --build-arg UID=$(id -u) -t robot_imitate .
