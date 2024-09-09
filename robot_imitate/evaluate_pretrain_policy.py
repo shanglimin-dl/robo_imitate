@@ -1429,12 +1429,14 @@ class CmdVelPublisher(Node):
         self.x_translation = 0.0
         self.y_translation = 0.0
         self.z_translation = 0.0
+        
 
-        self.output_directory = Path("/home/marija/exp-lerobot/examples/outputs/eval/example_pusht_diffusion")
-        # self.output_directory.mkdir(parents=True, exist_ok=True)
+        self.output_directory = Path("robot_imitate/outputs/example")
+        if not os.path.exists(self.output_directory):
+            os.mkdir(self.output_directory)
 
         self.device = torch.device("cuda")
-        self.pretrained_policy_path = Path("/home/marija/exp-lerobot/examples/outputs/train/example_pusht_diffusion")
+        self.pretrained_policy_path = Path("robot_imitate/outputs/example/train")
 
         self.policy = DiffusionPolicy.from_pretrained(self.pretrained_policy_path)
         print(self.policy)

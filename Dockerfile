@@ -3,9 +3,8 @@ FROM pytorch/pytorch:latest
 ARG UID=1000
 ARG DOCKERUSER=docker
 ARG DOCKERUSERCOMMENT=
-
-# ARG DATA_PATH=
-
+ENV DATA_PATH=
+ENV EPOCH=1000
 
 RUN useradd -d /${DOCKERUSER} -m \
             -u ${UID} -U \
@@ -29,4 +28,4 @@ RUN pip install 'termcolor>=2.4.0' \
 USER ${DOCKERUSER}
 WORKDIR /${DOCKERUSER}/app
 
-CMD ["sh", "-c", "python ./robot_imitate/compute_stats.py --path $DATA_PATH && python ./robot_imitate/train_script.py --path $DATA_PATH"]
+ENTRYPOINT ["sh", "-c", "python ./robot_imitate/compute_stats.py --path $DATA_PATH && python ./robot_imitate/train_script.py --path $DATA_PATH --epoch $EPOCH"]
