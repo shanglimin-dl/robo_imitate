@@ -1,4 +1,5 @@
 # robot_imitate/data/
+action_trajectoris/
 robot_imitate/metadata/
 robot_imitate/outputs/
 __pycache__/

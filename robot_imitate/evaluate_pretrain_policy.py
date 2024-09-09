@@ -183,8 +183,6 @@ def plot_action_trajectory(sim, positions1, positions2=None):
 
     # plt.show()
 
-from queue import Queue
-import threading
 
 class CmdVelPublisher(Node):
 
@@ -310,12 +308,6 @@ class CmdVelPublisher(Node):
 
         self.plotting_observations = []
         self.plotting_actions = []
-
-        # self.frame_queue = Queue(maxsize=2)
-        # self.server_thread = threading.Thread(target=start_stream_server, args=(self.frame_queue, ))
-        # self.server_thread.daemon = True
-        # self.server_thread.start()
-
         
     
     def get_transform(self, target_frame, source_frame):
@@ -342,7 +334,7 @@ class CmdVelPublisher(Node):
         euler_angle = t3d.euler.quat2euler(quat)
 
         # self.observation_pose = [x_pos, y_pos, z_pos, x_ori, y_ori, z_ori, w_ori]
-        self.observation_pose = [x_pos, y_pos, z_pos]
+        self.observation_pose = [x_pos, y_pos, z_pos, euler_angle[0], euler_angle[1], euler_angle[2]]
         self.observation_current_pose = msg
 
     def listener_callback(self, msg):
@@ -430,12 +422,12 @@ class CmdVelPublisher(Node):
             self.current_pose_relativ.pose.position.y = (float(self.action[1]) / 1.0) 
             self.current_pose_relativ.pose.position.z = (float(self.action[2]) / 2.5)
 
-            # quat = t3d.euler.euler2quat(0.0, 0.0, self.action[5])
+            quat = t3d.euler.euler2quat(self.action[3], self.action[4], self.action[5])
 
-            self.current_pose_relativ.pose.orientation.x = 0.0 #float(quat[1]) #0.0
-            self.current_pose_relativ.pose.orientation.y = 0.0 #float(quat[2]) #0.0
-            self.current_pose_relativ.pose.orientation.z = 0.0 #float(quat[3]) #0.0
-            self.current_pose_relativ.pose.orientation.w = 1.0 #float(quat[0]) #1.0
+            self.current_pose_relativ.pose.orientation.x = float(quat[1]) #0.0
+            self.current_pose_relativ.pose.orientation.y = float(quat[2]) #0.0
+            self.current_pose_relativ.pose.orientation.z = float(quat[3]) #0.0
+            self.current_pose_relativ.pose.orientation.w = float(quat[0]) #1.0
 
 
             current_pose_target = ros2numpy(self.current_pose_relativ.pose)
@@ -454,7 +446,7 @@ class CmdVelPublisher(Node):
             self.start_pose.pose = pose
             self.current_pose.pose = pose
 
-            if self.observation_msg.pose.position.z < 0.12:
+            if self.observation_msg.pose.position.z < 0.15: # 0.12 regular_value for picking
                 self.state = OperationState.OPEN_GRIPPER
                 self.timer = time.time()
                 # time.sleep(15)
@@ -462,9 +454,7 @@ class CmdVelPublisher(Node):
 
 
 
-            # print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^', self.current_pose)
             self.publisher_speed_limiter.publish(self.current_pose)
-            # time.sleep(0.05)
 
             self.step += 1
 
@@ -485,7 +475,7 @@ class CmdVelPublisher(Node):
                 self.timer = time.time()
 
         elif self.state == OperationState.GO_CLOSE:
-                self.observation_msg.pose.position.z = 0.085
+                self.observation_msg.pose.position.z = 0.15 # 0.085
                 self.publisher_speed_limiter.publish(self.observation_msg)
                 if time.time() - self.timer > 2.5:
                     self.state = OperationState.CLOSE_GRIPPER

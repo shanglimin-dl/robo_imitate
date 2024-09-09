@@ -252,7 +252,6 @@ def main():
     repo_id = 'test'
     revision = 0 
 
-    # root = 'robot_imitate/data/2024_08_21_20_10_53.parquet'
     root = parsed_args.path
     print(root)
     if root is None:
