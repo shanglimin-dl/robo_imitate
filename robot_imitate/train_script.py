@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-
 import os
 from common.config import DiffusionConfig
 from common.diffusion_policy import DiffusionPolicy

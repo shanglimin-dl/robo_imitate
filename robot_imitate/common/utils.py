@@ -107,11 +107,11 @@ def create_stats_buffers(
     return stats_buffers
 
 
-def _no_stats_error_str(name: str) -> str:
-    return (
-        f"`{name}` is infinity. You should either initialize with `stats` as an argument, or use a "
-        "pretrained model."
-    )
+# def _no_stats_error_str(name: str) -> str:
+#     return (
+#         f"`{name}` is infinity. You should either initialize with `stats` as an argument, or use a "
+#         "pretrained model."
+#     )
 
 def unflatten_dict(d, sep="/"):
     outdict = {}
