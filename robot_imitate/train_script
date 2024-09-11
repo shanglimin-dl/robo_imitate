@@ -50,7 +50,7 @@ def main(root, epoch):
     dataloader = torch.utils.data.DataLoader(
         dataset,
         num_workers=4,
-        batch_size=32,
+        batch_size=8,
         shuffle=True,
         pin_memory=device != torch.device("cpu"),
         drop_last=True,
