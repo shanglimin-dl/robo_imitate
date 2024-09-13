@@ -339,7 +339,7 @@ class CmdVelPublisher(Node):
 
     def listener_callback(self, msg):
         cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
-        cv_image = cv2.resize(cv_image, (96, 96))
+        cv_image = cv2.resize(cv_image, (224, 224))
         self.image = cv_image
         self.frames.append(self.image)
         image_name = "/home/marija/exp-lerobot/examples/outputs/rollout_images/" + str(self.counter) + ".jpg"
@@ -422,7 +422,7 @@ class CmdVelPublisher(Node):
             self.current_pose_relativ.pose.position.y = (float(self.action[1]) / 1.0) 
             self.current_pose_relativ.pose.position.z = (float(self.action[2]) / 2.5)
 
-            quat = t3d.euler.euler2quat(self.action[3], self.action[4], self.action[5])
+            quat = t3d.euler.euler2quat((self.action[3] / 1.5), (self.action[4] / 6.5), (self.action[5] / 1.5))
 
             self.current_pose_relativ.pose.orientation.x = float(quat[1]) #0.0
             self.current_pose_relativ.pose.orientation.y = float(quat[2]) #0.0
@@ -446,7 +446,7 @@ class CmdVelPublisher(Node):
             self.start_pose.pose = pose
             self.current_pose.pose = pose
 
-            if self.observation_msg.pose.position.z < 0.15: # 0.12 regular_value for picking
+            if self.observation_msg.pose.position.z < 0.12: # 0.12 regular_value for picking
                 self.state = OperationState.OPEN_GRIPPER
                 self.timer = time.time()
                 # time.sleep(15)
@@ -475,7 +475,7 @@ class CmdVelPublisher(Node):
                 self.timer = time.time()
 
         elif self.state == OperationState.GO_CLOSE:
-                self.observation_msg.pose.position.z = 0.15 # 0.085
+                self.observation_msg.pose.position.z = 0.085 # 0.085
                 self.publisher_speed_limiter.publish(self.observation_msg)
                 if time.time() - self.timer > 2.5:
                     self.state = OperationState.CLOSE_GRIPPER
