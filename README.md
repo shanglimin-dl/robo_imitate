@@ -1,4 +1,9 @@
-![Opis slike](./media/object_picking.png)
+![Teleop](./media/teleop.png)
+
+
+| ![Lite6 Physical Teleoperation](./media/pick_object.gif)  | ![UR5e Webots Teleoperation](./media/move_object.gif) |
+|:-------------------------------------------------------------------:|:----------------------------------------------------:|
+| Object picking with imitation learning                         | Object picking when pose of object is randomized    |
 
 
 observation.image inside config file sholud be set on size 96 x 96.
