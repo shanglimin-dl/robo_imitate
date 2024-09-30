@@ -1,4 +1,4 @@
-![Opis slike](robot_imitate/images/object_picking.png)
+[Opis slike](robot_imitate/images/object_picking.png)
 
 
 
