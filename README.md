@@ -1,5 +1,4 @@
-[Opis slike](robot_imitate/images/object_picking.png)
-
+![Opis slike](./media/object_picking.png)
 
 
 observation.image inside config file sholud be set on size 96 x 96.
