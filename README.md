@@ -1,3 +1,9 @@
+![Opis slike](robot_imitate/images/object_picking.pdf)
+
+
+
+observation.image inside config file sholud be set on size 96 x 96.
+
 Inside `robo_imitate` directory run follow commands:
 
 ```sh 
