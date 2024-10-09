@@ -18,7 +18,7 @@ docker build --build-arg UID=$(id -u) -t robot_imitate .
 docker run -v $(pwd)/robot_imitate/:/docker/app/robot_imitate:Z --gpus all -it -e DATA_PATH=robot_imitate/data/2024_09_09_19_47_17.parquet -e EPOCH=10 robot_imitate
 ```
 
-[!TIP]
+>[!TIP]
 If you want to run model training inside docker run this comand inside folder `src\robo_imitate`. Before of that you need to build docker, view section  [Model evaluation](#model-evaluation). 
 
 ```sh
@@ -27,7 +27,7 @@ python3 ./robot_imitate/compute_stats --path robot_imitate/data/2024_09_09_19_47
 
 
 ### Model evaluation
-[!IMPORTANT]  
+>[!IMPORTANT]  
 You need to have installed docker. If you have Nvidia GPU you need additionaly follow this [file](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html).
 
 - Build docker container
