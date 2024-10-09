@@ -2,15 +2,12 @@
 
 import os
 import pandas as pd
-import numpy as np
 from datetime import datetime
 import datasets
 from PIL import Image
 import io
 import re
 import argparse
-
-REWARD_STEP = 0.0065
 
 
 def load_images(image_folder):
@@ -46,6 +43,7 @@ def load_episodes(path):
 
 
 def delete_rotation(episode_content):
+    """ If save full pose, you can delete rotation from dataset in current version"""
     num_frames = len(episode_content)
     actions = []
 
@@ -62,25 +60,6 @@ def delete_rotation(episode_content):
         action_str = '[{}]'.format(', '.join(map(str, action))) + '\n'
         actions.append(action_str)
     return actions
-
-
-def check_actions(episode_content, filename):
-    num_frames = len(episode_content)
-    actions = []
-
-    for line in range(0, num_frames):
-        current_pose = episode_content[line].replace("\n", "")[1:-1]
-        current_pose = current_pose.split(',')
-
-        current_pose_np = []
-        for i in current_pose:
-            current_pose_np.append(float(i))
-
-        action = current_pose_np[3:]
-        for a in action:
-            if abs(a) > 0.002:
-                print(f'[ERROR] file {filename} conatains invalid value')
-                return
 
 
 def save_data_frame(path):
@@ -117,13 +96,11 @@ def save_data_frame(path):
         image_folder = path + '/' + name
         file_path = path + '/' + 'actions/' + name + '.txt'
         observation_file_path = path + '/' + 'observations/' + name + '.txt'
-        reward_file_path = path + '/' + 'rewards/' + name + '.txt'
 
         images = load_images(image_folder)
 
         file_content = open(file_path, 'r').readlines()
         file_content = delete_rotation(file_content)
-        check_actions(file_content, image_folder)
 
         observation_file_content = open(observation_file_path, 'r').readlines()
         observation_file_content = delete_rotation(observation_file_content)
@@ -179,15 +156,11 @@ def load_hf_dataset_from_parquet(file_path):
 def main():
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--real', action='store_true',
-                        help='Enable saving data from real environment.')
     parser.add_argument('--filename', type=str, help='Name of data directory.')
 
     args = parser.parse_args()
 
     DATA_FILE = 'DATA'
-    if args.real:
-        DATA_FILE = 'DATA_REAL'
 
     if args.filename:
         DATA_FILE = args.filename
@@ -197,12 +170,5 @@ def main():
     save_data_frame(file_path)
 
 
-def test():
-    test_str = ['[10, 12, 11, 0, 0, 0]\n', '[25, 24, 21, 0, 0, 0]\n',
-                '[2, 14, 12, 0, 0, 0]\n', '[10, 11, 30, 0, 0, 0]\n', '[10, 10, 30, 0, 0, 0]\n']
-    print(delete_rotation(test_str))
-
-
 if __name__ == '__main__':
     main()
-    # test()
