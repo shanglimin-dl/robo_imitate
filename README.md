@@ -26,7 +26,7 @@ python3 ./robot_imitate/compute_stats --path robot_imitate/data/2024_09_09_19_47
 
 ### Model evaluation
 >[!IMPORTANT]  
-You need to have Docker installed. If you have an Nvidia GPU, you need to additionally follow this [guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html).
+You need to have Docker installed. If you have an Nvidia GPU, you need to additionally follow this [guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html). You need to istall Isaac-Sim.
 
 - Build docker container
 ```sh
@@ -51,4 +51,3 @@ make exec
 ```sh
 cd src/robo_imitate && ./robo_imitate/inference
 ```
-
