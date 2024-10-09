@@ -15,7 +15,7 @@ import cv2
 import os
 
 
-DATA_DIR = 'DATA_REAL_mug_s_mouse_1'
+DATA_DIR = 'DATA_REAL'
 
 
 def get_action_from_observations(observations, segment):
@@ -144,9 +144,7 @@ class SaveTeleoperationData(Node):
     def save_current_frame(self):
         if self.images_folder is None:
             return
-        # if self.image is None or self.current_observation_pose is None:
-        #     return
-
+        
         x_pos = self.current_observation_pose.pose.position.x
         y_pos = self.current_observation_pose.pose.position.y
         z_pos = self.current_observation_pose.pose.position.z
