@@ -68,10 +68,24 @@ ENV DOCKERUSER=${DOCKERUSER}
 
 USER ${DOCKERUSER}
 
-RUN pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+RUN pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 RUN pip3 install --no-warn-script-location --user lapx transforms3d
 RUN pip3 install pymap3d pyspacemouse 
-RUN pip3 install 'numpy<1.24'
+
+# dep for imitation model
+RUN pip install 'termcolor>=2.4.0' \
+                'gdown>=5.1.0' \
+                'hydra-core >=1.3.2'\
+                'einops >=0.8.0'\
+                'pymunk >=6.6.0' \
+                'zarr >=2.17.0' \
+                'numba >=0.59.0' \
+                'opencv-python >=4.9.0' \
+                'diffusers >=0.27.2' \
+                'torchvision >=0.17.1' \
+                'datasets >=2.19.0' \
+                'numpy<1.24' \
+                matplotlib
 
 COPY ./docker/bashrc /tmp/bashrc
 RUN cat /tmp/bashrc >> /${DOCKERUSER}/.bashrc
