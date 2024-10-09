@@ -21,7 +21,10 @@ docker run -v $(pwd)/robot_imitate/:/docker/app/robot_imitate:Z --gpus all -it -
 [!TIP]
 If you want to run model training inside docker run this comand inside folder `src\robo_imitate`. Before of that you need to build docker, view section  [Model evaluation](#model-evaluation). 
 
+```sh
 python3 ./robot_imitate/compute_stats --path robot_imitate/data/2024_09_09_19_47_17.parquet  && python3 ./robot_imitate/train_script --path robot_imitate/data/2024_09_09_19_47_17.parquet  --epoch 1000
+```
+
 
 ### Model evaluation
 [!IMPORTANT]  
