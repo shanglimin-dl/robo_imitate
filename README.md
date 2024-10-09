@@ -1,5 +1,3 @@
-![Screwdriver picking](./media/teleop.png)
-
 
 | ![Lite6 Physical Teleoperation](./media/pick_object.gif)  | ![UR5e Webots Teleoperation](./media/move_object.gif) |
 |:-------------------------------------------------------------------:|:----------------------------------------------------:|
