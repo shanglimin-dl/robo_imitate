@@ -1,10 +1,11 @@
+| ![Lite6 Physical Teleoperation](./media/pick_object.gif)  | ![UR5e Webots Teleoperation](./media/move_object.gif) |
+|:-------------------------------------------------------------------:|:----------------------------------------------------:|
+| Object picking with imitation learning                         | Object picking when pose of object is randomized    |
+
 <div align="center">
 	<img src="./media/robo_imitate.png">
 </div>
 
-| ![Lite6 Physical Teleoperation](./media/pick_object.gif)  | ![UR5e Webots Teleoperation](./media/move_object.gif) |
-|:-------------------------------------------------------------------:|:----------------------------------------------------:|
-| Object picking with imitation learning                         | Object picking when pose of object is randomized    |
 
 
 ### Model training
