@@ -2,6 +2,7 @@ import torch
 import datasets
 from torch import Tensor, nn
 from safetensors.torch import load_file
+import numpy as np
 
 
 def populate_queues(queues, batch):
@@ -261,3 +262,57 @@ def load_previous_and_future_frames(
     
     return item
 
+
+def plot_action_trajectory(sim, positions1, positions2=None):
+    import matplotlib.pyplot as plt
+    from datetime import datetime
+    import os
+
+    positions1 = np.array(positions1)
+    norm1 = plt.Normalize(positions1[:, 2].min(), positions1[:, 2].max())
+    print(norm1)
+    colors1 = plt.cm.viridis(norm1(positions1[:, 2]))
+
+    fig = plt.figure(figsize=(12, 8))
+    ax = fig.add_subplot(111, projection='3d')
+
+    sc1 = ax.scatter(positions1[:, 0], positions1[:, 1], positions1[:, 2], c=colors1, marker='o', s=50, alpha=0.8, edgecolor='k', linewidth=0.5, label='Trajektorija observacije')
+
+    if positions2 is not None:
+        positions2 = np.array(positions2)
+        norm2 = plt.Normalize(positions2[:, 2].min(), positions2[:, 2].max())
+        colors2 = plt.cm.plasma(norm2(positions2[:, 2]))
+        print(norm2)
+
+        sc2 = ax.scatter(positions2[:, 0], positions2[:, 1], positions2[:, 2], c=colors2, marker='^', s=50, alpha=0.8, edgecolor='k', linewidth=0.5, label='Trajektorija akcije')
+
+    ax.set_xlabel('X osa', fontsize=12, fontweight='bold')
+    ax.set_ylabel('Y osa', fontsize=12, fontweight='bold')
+    ax.set_zlabel('Z osa', fontsize=12, fontweight='bold')
+
+    ax.set_title('Razlika između akcije i observacije', fontsize=14, fontweight='bold')
+
+    ax.grid(True, linestyle='--', alpha=0.7)
+    ax.yaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))  
+    ax.zaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))  
+    ax.xaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
+
+    ax.legend(loc='best')
+
+    now = datetime.now()
+    real_path = 'action_trajectoris/real/'
+    sim_path = 'action_trajectoris/sim/'
+
+    if not os.path.exists('action_trajectoris'):
+        os.mkdir('action_trajectoris')
+    if not os.path.exists(real_path):
+        os.mkdir(real_path)
+    if not os.path.exists(sim_path):
+        os.mkdir(sim_path)
+
+    name = real_path + now.strftime("%Y_%m_%d_%H_%M_%S") + '.png'
+    if sim:
+        name = sim_path + now.strftime("%Y_%m_%d_%H_%M_%S") + '.png'
+
+    plt.savefig(name, bbox_inches='tight', dpi=300)
+    
