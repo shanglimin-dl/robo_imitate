@@ -158,7 +158,7 @@ class CmdVelPublisher(Node):
         
 
         self.device = torch.device("cuda")
-        self.pretrained_policy_path = Path("robot_imitate/outputs/train")
+        self.pretrained_policy_path = Path("imitation/outputs/train")
 
         self.policy = DiffusionPolicy.from_pretrained(self.pretrained_policy_path)
         print(self.policy)

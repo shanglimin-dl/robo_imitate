@@ -277,7 +277,7 @@ def main():
 
    
 
-    meta_data_dir = 'robot_imitate/metadata/'
+    meta_data_dir = 'imitation/metadata/'
     print('[INFO] Metadata path: ', meta_data_dir)
 
     if not os.path.exists(meta_data_dir):

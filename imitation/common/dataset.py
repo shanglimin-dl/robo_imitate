@@ -121,7 +121,7 @@ class LeRobotDataset(torch.utils.data.Dataset):
             self.episode_data_index = calculate_episode_data_index_for_custom_dataset(self.hf_dataset)
         
         # safe_tensors_path = 'This need add path to stats path'
-        safe_tensors_path = 'robot_imitate/metadata/stats.safetensors'
+        safe_tensors_path = 'imitation/metadata/stats.safetensors'
         self.stats = load_stats(repo_id, version, root=safe_tensors_path)
 
     @property

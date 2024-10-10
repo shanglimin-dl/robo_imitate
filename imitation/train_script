@@ -20,7 +20,7 @@ def main(root, epoch):
     from datetime import datetime
 
     # Create a directory to store the training checkpoint.
-    output_directory = Path("robot_imitate/outputs/train")
+    output_directory = Path("imitation/outputs/train")
  
     output_directory.mkdir(parents=True, exist_ok=True)
 
@@ -90,7 +90,7 @@ def main(root, epoch):
     plt.legend()
 
     time_now = datetime.now()
-    loss_path = 'robot_imitate/outputs/losses/'
+    loss_path = 'imitation/outputs/losses/'
     if not os.path.exists(loss_path):
         os.mkdir(loss_path)
 

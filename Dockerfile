@@ -28,4 +28,4 @@ RUN pip install 'termcolor>=2.4.0' \
 USER ${DOCKERUSER}
 WORKDIR /${DOCKERUSER}/app
 
-ENTRYPOINT ["sh", "-c", "python ./robot_imitate/compute_stats --path $DATA_PATH && python ./robot_imitate/train_script --path $DATA_PATH --epoch $EPOCH"]
+ENTRYPOINT ["sh", "-c", "python ./imitation/compute_stats --path $DATA_PATH && python ./imitation/train_script --path $DATA_PATH --epoch $EPOCH"]

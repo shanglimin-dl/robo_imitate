@@ -218,12 +218,12 @@ class CmdVelPublisher(Node):
         self.z_translation = 0.0
         
 
-        self.output_directory = Path("robot_imitate/outputs/example")
+        self.output_directory = Path("imitation/outputs/example")
         if not os.path.exists(self.output_directory):
             os.mkdir(self.output_directory)
 
         self.device = torch.device("cuda")
-        self.pretrained_policy_path = Path("robot_imitate/outputs/train")
+        self.pretrained_policy_path = Path("imitation/outputs/train")
 
         self.policy = DiffusionPolicy.from_pretrained(self.pretrained_policy_path)
         print(self.policy)

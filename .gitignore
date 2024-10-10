@@ -1,5 +1,5 @@
-# robot_imitate/data/
+# imitation/data/
 action_trajectoris/
-robot_imitate/metadata/
-robot_imitate/outputs/
+imitation/metadata/
+imitation/outputs/
 __pycache__/

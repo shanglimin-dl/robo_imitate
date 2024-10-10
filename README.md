@@ -1,4 +1,4 @@
-# Imitation learning
+# Imitation learning 
 
 | ![Lite6 Physical Teleoperation](./media/pick_object.gif)  | ![UR5e Webots Teleoperation](./media/move_object.gif) |
 |:-------------------------------------------------------------------:|:----------------------------------------------------:|
@@ -15,18 +15,18 @@
 Inside `robo_imitate` directory run follow commands:
 
 ```sh 
-docker build --build-arg UID=$(id -u) -t robot_imitate .
+docker build --build-arg UID=$(id -u) -t imitation .
 ```
 
 ```sh
-docker run -v $(pwd)/robot_imitate/:/docker/app/robot_imitate:Z --gpus all -it -e DATA_PATH=robot_imitate/data/2024_09_09_19_47_17.parquet -e EPOCH=10 robot_imitate
+docker run -v $(pwd)/imitation/:/docker/app/imitation:Z --gpus all -it -e DATA_PATH=imitation/data/2024_09_09_19_47_17.parquet -e EPOCH=10 imitation
 ```
 
 >[!TIP]
  If you want to run model training inside docker, run this command inside the folder `src/robo_imitate`. Before that, you need to build the docker (see section "Model evaluation").. 
 
 ```sh
-python3 ./robot_imitate/compute_stats --path robot_imitate/data/2024_09_09_19_47_17.parquet  && python3 ./robot_imitate/train_script --path robot_imitate/data/2024_09_09_19_47_17.parquet  --epoch 1000
+python3 ./imitation/compute_stats --path imitation/data/2024_09_09_19_47_17.parquet  && python3 ./imitation/train_script --path imitation/data/2024_09_09_19_47_17.parquet  --epoch 1000
 ```
 
 
