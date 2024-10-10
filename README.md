@@ -55,5 +55,5 @@ make exec
 
 - Run model inside docker
 ```sh
-cd src/robo_imitate && ./robo_imitate/inference
+cd src/robo_imitate && ./imitation/inference
 ```
