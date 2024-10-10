@@ -2,34 +2,26 @@
 
 import rclpy
 from rclpy.node import Node
-from geometry_msgs.msg import Twist
 from geometry_msgs.msg import PoseStamped, Twist, Pose
-from std_msgs.msg import Float64MultiArray
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
-from std_msgs.msg import Int32
-
+from std_msgs.msg import Float64MultiArray, Int32
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 
 
 from common.inference import Imitation
 from common.utils import plot_action_trajectory
-import tf2_ros
+from ros2_numpy_tf import numpy2ros, ros2numpy
 
 from enum import Enum
-import subprocess
-import re
-import time
-import subprocess
-import re
-from collections import deque
 import transforms3d as t3d
-import time
 from pathlib import Path
+import subprocess
+import re
+import time
 import cv2
 import os
-
-from ros2_numpy_tf import numpy2ros, ros2numpy
+import tf2_ros
 
 
 def call_ros2_service(activate_controllers, deactivate_controllers):
@@ -69,25 +61,25 @@ def check_pose_stamped_values(pose_stamped_msg):
     return is_orientation_zero_except_w
 
 
-class CmdVelPublisher(Node):
+class PickScrewdriver(Node):
 
     def __init__(self, sim):
-        super().__init__('cmd_vel_publisher')
-        self.get_logger().info("CmdVelPublisher node started")
+        super().__init__('pick_screwdriver')
+        self.get_logger().info("PickScrewdriver node started")
 
-        self.subscription = self.create_subscription(
+        self.image_subscriber = self.create_subscription(
             Image,
             '/rgb',
-            self.listener_callback,
+            self.image_callback,
             1)
         self.bridge = CvBridge()
-
-        self.timer = self.create_timer(0.1, self.publish_cmd_vel)
+        
+        self.timer = self.create_timer(0.1, self.publish_pose)
 
         self.publisher_speed_limiter = self.create_publisher(
             PoseStamped, '/target_frame_raw', 1)
 
-        self.publisher_gripper = self.create_publisher(
+        self.isaac_gripper_publisher = self.create_publisher(
             Float64MultiArray, '/position_controller/commands', 1)
 
         self.current_pose_subscriber = self.create_subscription(
@@ -97,19 +89,12 @@ class CmdVelPublisher(Node):
             1)
         self.current_pose_subscriber
         
-
-        self.x_translation = 0.0
-        self.y_translation = 0.0
-        self.z_translation = 0.0
-        
-
         self.output_directory = Path("imitation/outputs/example")
         if not os.path.exists(self.output_directory):
             os.mkdir(self.output_directory)
 
         self.imitation = Imitation()
         
-      
         self.current_pose_relativ = PoseStamped()
         self.current_pose = PoseStamped()
         self.step = 0
@@ -117,40 +102,32 @@ class CmdVelPublisher(Node):
         self.image  = None
         self.action = None
 
-        self.current_x =  0.0
-        self.current_y =  0.0
-        self.current_z =  0.0
         # 60 steps for sim 90 for real env
         self.max_episode_steps = 90
-        self.frames = []
-        self.twist_msg = Twist()
 
-        self.counter = 0
-        self.queue = deque(maxlen=3)
         self.sim = sim
-        self.gripper_state = 0
 
         self.observation_pose = None
         self.observation_current_pose = PoseStamped()
         if self.sim:
             # on init open griper and move screwdriver on random position
-            self.gripper_msg = Float64MultiArray()
-            self.gripper_msg.data = [0.0]
-            self.publisher_gripper.publish(self.gripper_msg)
+            self.gripper_state = Float64MultiArray()
+            self.gripper_state.data = [0.0]
+            self.isaac_gripper_publisher.publish(self.gripper_state)
 
-            self.publisher_respawn = self.create_publisher(Twist, '/respawn', 1)
-            msg_arr = Twist()
-            self.publisher_respawn.publish(msg_arr)
+            self.random_move_screwdriver = self.create_publisher(Twist, '/respawn', 1)
+            twist_msg = Twist()
+            self.random_move_screwdriver.publish(twist_msg)
         else:
-            self.switcher_publisher = self.create_publisher(Int32, '/gripper_switcher', 1)
-            msg = Int32()
-            msg.data = 1
-            self.switcher_publisher.publish(msg)
+            self.lite6_gripper_publisher = self.create_publisher(Int32, '/gripper_switcher', 1)
+            gripper_state_msg = Int32()
+            gripper_state_msg.data = 1
+            self.lite6_gripper_publisher.publish(gripper_state_msg)
 
             time.sleep(1)
             msg = Int32()
             msg.data = 2
-            self.switcher_publisher.publish(msg)
+            self.lite6_gripper_publisher.publish(msg)
 
         self.timer = time.time()
 
@@ -173,7 +150,6 @@ class CmdVelPublisher(Node):
                               'cartesian_motion_controller')
         self.joint_state.header.stamp = self.get_clock().now().to_msg()
         self.publisher_joint_init.publish(self.joint_state)
-
         time.sleep(3)
         call_ros2_service('cartesian_motion_controller', 'joint_trajectory_controller')
         
@@ -181,7 +157,7 @@ class CmdVelPublisher(Node):
         self.tfListener = tf2_ros.TransformListener(self.tfBuffer, self)
 
         self.state = OperationState.IDLE
-        self.observation_msg = PoseStamped()
+        self.observation_current_pose = PoseStamped()
         self.start_pose = None
 
 
@@ -199,7 +175,7 @@ class CmdVelPublisher(Node):
             return None
     
     def current_pose_callback(self, msg):
-        self.observation_msg = msg
+        self.observation_current_pose = msg
         x_pos = msg.pose.position.x
         y_pos = msg.pose.position.y
         z_pos = msg.pose.position.z
@@ -212,20 +188,15 @@ class CmdVelPublisher(Node):
         quat = [w_ori, x_ori, y_ori, z_ori]
         euler_angle = t3d.euler.quat2euler(quat)
 
-        # self.observation_pose = [x_pos, y_pos, z_pos, x_ori, y_ori, z_ori, w_ori]
         self.observation_pose = [x_pos, y_pos, z_pos, euler_angle[0], euler_angle[1], euler_angle[2]]
         self.observation_current_pose = msg
 
-    def listener_callback(self, msg):
+    def image_callback(self, msg):
         cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
         cv_image = cv2.resize(cv_image, (224, 224))
         self.image = cv_image
-        self.frames.append(self.image)
-        image_name = "/home/marija/exp-lerobot/examples/outputs/rollout_images/" + str(self.counter) + ".jpg"
-        cv2.imwrite(image_name, self.image)
-        self.counter +=1
           
-    def publish_cmd_vel(self):
+    def publish_pose(self):
 
         if self.observation_pose is None:
             return
@@ -266,10 +237,10 @@ class CmdVelPublisher(Node):
 
             quat = t3d.euler.euler2quat((self.action[3] / 1.5), (self.action[4] / 6.5), (self.action[5] / 1.5))
 
-            self.current_pose_relativ.pose.orientation.x = float(quat[1]) #0.0
-            self.current_pose_relativ.pose.orientation.y = float(quat[2]) #0.0
-            self.current_pose_relativ.pose.orientation.z = float(quat[3]) #0.0
-            self.current_pose_relativ.pose.orientation.w = float(quat[0]) #1.0
+            self.current_pose_relativ.pose.orientation.x = float(quat[1])
+            self.current_pose_relativ.pose.orientation.y = float(quat[2])
+            self.current_pose_relativ.pose.orientation.z = float(quat[3])
+            self.current_pose_relativ.pose.orientation.w = float(quat[0])
 
 
             current_pose_target = ros2numpy(self.current_pose_relativ.pose)
@@ -277,7 +248,6 @@ class CmdVelPublisher(Node):
             target_rotation = target_rotation[:3, :3]
 
             target_transform = ros2numpy(self.observation_current_pose.pose) @ current_pose_target
-            # print(target_transform)
 
             self.plotting_actions.append(target_transform[:3, 3])
             self.plotting_observations.append(self.observation_pose[:3])
@@ -288,10 +258,9 @@ class CmdVelPublisher(Node):
             self.start_pose.pose = pose
             self.current_pose.pose = pose
 
-            if self.observation_msg.pose.position.z < 0.12: # 0.12 regular_value for picking
+            if self.observation_current_pose.pose.position.z < 0.12:
                 self.state = OperationState.OPEN_GRIPPER
                 self.timer = time.time()
-                # time.sleep(15)
                 self.get_logger().info('___________________________________ END ___________________________________')
 
 
@@ -310,34 +279,34 @@ class CmdVelPublisher(Node):
             if not self.sim:
                 msg = Int32()
                 msg.data = 1
-                self.switcher_publisher.publish(msg)
+                self.lite6_gripper_publisher.publish(msg)
 
             if time.time() - self.timer > 1.5:
                 self.state = OperationState.GO_CLOSE
                 self.timer = time.time()
 
         elif self.state == OperationState.GO_CLOSE:
-                self.observation_msg.pose.position.z = 0.085 # 0.085
-                self.publisher_speed_limiter.publish(self.observation_msg)
+                self.observation_current_pose.pose.position.z = 0.085
+                self.publisher_speed_limiter.publish(self.observation_current_pose)
                 if time.time() - self.timer > 2.5:
                     self.state = OperationState.CLOSE_GRIPPER
                     self.timer  =time.time()
         
         elif self.state == OperationState.CLOSE_GRIPPER:
             if self.sim:
-                self.gripper_msg.data = [-0.01]
-                self.publisher_gripper.publish(self.gripper_msg)
+                self.gripper_state.data = [-0.01]
+                self.isaac_gripper_publisher.publish(self.gripper_state)
             else:
                 msg = Int32()
                 msg.data = 0
-                self.switcher_publisher.publish(msg)
+                self.lite6_gripper_publisher.publish(msg)
 
             if time.time() -  self.timer > 1.5:
                 self.state = OperationState.PICK_UP
                 self.timer = time.time()
         elif self.state == OperationState.PICK_UP:
-                self.observation_msg.pose.position.z = 0.29
-                self.publisher_speed_limiter.publish(self.observation_msg)
+                self.observation_current_pose.pose.position.z = 0.29
+                self.publisher_speed_limiter.publish(self.observation_current_pose)
                 if time.time() - self.timer > 1.5:
                     self.state = OperationState.END
                     self.timer = time.time()
@@ -349,7 +318,7 @@ class CmdVelPublisher(Node):
                     # shutdown gripper
                     msg = Int32()
                     msg.data = 2
-                    self.switcher_publisher.publish(msg)
+                    self.lite6_gripper_publisher.publish(msg)
 
                 self.get_logger().info(f"Finished publishing. Shutting down node...")
                 rclpy.shutdown()
@@ -362,12 +331,12 @@ class CmdVelPublisher(Node):
 def main(args=None):
 
     import argparse
-    parser = argparse.ArgumentParser(description='CmdVelPublisher')
+    parser = argparse.ArgumentParser(description='PickScrewdriver')
     parser.add_argument('--sim', action='store_true', help='Use simulation')
     parsed_args = parser.parse_args()
 
     rclpy.init(args=args)
-    cmd_vel_publisher = CmdVelPublisher(parsed_args.sim)
+    cmd_vel_publisher = PickScrewdriver(parsed_args.sim)
     rclpy.spin(cmd_vel_publisher)
     cmd_vel_publisher.destroy_node()
     rclpy.shutdown()
