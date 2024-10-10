@@ -10,9 +10,10 @@ from std_msgs.msg import Int32
 
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
-import numpy as np
-import torch
-from common.diffusion_policy import DiffusionPolicy
+
+
+from common.inference import Imitation
+from common.utils import plot_action_trajectory
 import tf2_ros
 
 from enum import Enum
@@ -21,13 +22,12 @@ import re
 import time
 import subprocess
 import re
+from collections import deque
 import transforms3d as t3d
 import time
 from pathlib import Path
-import torch
 import cv2
 import os
-
 
 from ros2_numpy_tf import numpy2ros, ros2numpy
 
@@ -52,12 +52,14 @@ def call_ros2_service(activate_controllers, deactivate_controllers):
 class OperationState(Enum):
     IDLE = 0
     INFERENCE = 1
-    END = 2
-
+    GO_CLOSE = 2
+    CLOSE_GRIPPER = 3
+    PICK_UP = 4
+    OPEN_GRIPPER = 5
+    END = 6
 
 
 def check_pose_stamped_values(pose_stamped_msg):
-    # check if empty pose
     position = pose_stamped_msg.pose.position
     orientation = pose_stamped_msg.pose.orientation
     is_position_zero = position.x == 0.0 and position.y == 0.0 and position.z == 0.0
@@ -65,64 +67,6 @@ def check_pose_stamped_values(pose_stamped_msg):
     is_orientation_zero_except_w = orientation.x == 0.0 and orientation.y == 0.0 and orientation.z == 0.0 and orientation.w == 1.0
     
     return is_orientation_zero_except_w
-
-
-
-def plot_action_trajectory(sim, positions1, positions2=None):
-    import matplotlib.pyplot as plt
-    from datetime import datetime
-    import os
-
-    positions1 = np.array(positions1)
-    norm1 = plt.Normalize(positions1[:, 2].min(), positions1[:, 2].max())
-    print(norm1)
-    colors1 = plt.cm.viridis(norm1(positions1[:, 2]))
-
-    fig = plt.figure(figsize=(12, 8))
-    ax = fig.add_subplot(111, projection='3d')
-
-    sc1 = ax.scatter(positions1[:, 0], positions1[:, 1], positions1[:, 2], c=colors1, marker='o', s=50, alpha=0.8, edgecolor='k', linewidth=0.5, label='Trajektorija observacije')
-
-    if positions2 is not None:
-        positions2 = np.array(positions2)
-        norm2 = plt.Normalize(positions2[:, 2].min(), positions2[:, 2].max())
-        colors2 = plt.cm.plasma(norm2(positions2[:, 2]))
-        print(norm2)
-
-        sc2 = ax.scatter(positions2[:, 0], positions2[:, 1], positions2[:, 2], c=colors2, marker='^', s=50, alpha=0.8, edgecolor='k', linewidth=0.5, label='Trajektorija akcije')
-
-    ax.set_xlabel('X osa', fontsize=12, fontweight='bold')
-    ax.set_ylabel('Y osa', fontsize=12, fontweight='bold')
-    ax.set_zlabel('Z osa', fontsize=12, fontweight='bold')
-
-    ax.set_title('Razlika između akcije i observacije', fontsize=14, fontweight='bold')
-
-    ax.grid(True, linestyle='--', alpha=0.7)
-    ax.yaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))  
-    ax.zaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))  
-    ax.xaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
-
-    # ax.view_init(elev=20, azim=-30)
-    ax.legend(loc='best')
-
-    now = datetime.now()
-    real_path = 'action_trajectoris/real/'
-    sim_path = 'action_trajectoris/sim/'
-
-    if not os.path.exists('action_trajectoris'):
-        os.mkdir('action_trajectoris')
-    if not os.path.exists(real_path):
-        os.mkdir(real_path)
-    if not os.path.exists(sim_path):
-        os.mkdir(sim_path)
-
-    name = real_path + now.strftime("%Y_%m_%d_%H_%M_%S") + '.png'
-    if sim:
-        name = sim_path + now.strftime("%Y_%m_%d_%H_%M_%S") + '.png'
-
-    plt.savefig(name, bbox_inches='tight', dpi=300)
-
-    # plt.show()
 
 
 class CmdVelPublisher(Node):
@@ -152,20 +96,20 @@ class CmdVelPublisher(Node):
             self.current_pose_callback,
             1)
         self.current_pose_subscriber
-
-        self.end_signal_publisher = self.create_publisher(
-            Int32, '/activate_fix_sequence', 1)
         
 
-        self.device = torch.device("cuda")
-        self.pretrained_policy_path = Path("imitation/outputs/train")
-
-        self.policy = DiffusionPolicy.from_pretrained(self.pretrained_policy_path)
-        print(self.policy)
-        self.policy.eval()
-        self.policy.to(self.device)
+        self.x_translation = 0.0
+        self.y_translation = 0.0
+        self.z_translation = 0.0
         
-        self.policy.reset()
+
+        self.output_directory = Path("imitation/outputs/example")
+        if not os.path.exists(self.output_directory):
+            os.mkdir(self.output_directory)
+
+        self.imitation = Imitation()
+        
+      
         self.current_pose_relativ = PoseStamped()
         self.current_pose = PoseStamped()
         self.step = 0
@@ -173,25 +117,42 @@ class CmdVelPublisher(Node):
         self.image  = None
         self.action = None
 
+        self.current_x =  0.0
+        self.current_y =  0.0
+        self.current_z =  0.0
         # 60 steps for sim 90 for real env
         self.max_episode_steps = 90
+        self.frames = []
         self.twist_msg = Twist()
 
+        self.counter = 0
+        self.queue = deque(maxlen=3)
         self.sim = sim
+        self.gripper_state = 0
+
         self.observation_pose = None
         self.observation_current_pose = PoseStamped()
+        if self.sim:
+            # on init open griper and move screwdriver on random position
+            self.gripper_msg = Float64MultiArray()
+            self.gripper_msg.data = [0.0]
+            self.publisher_gripper.publish(self.gripper_msg)
+
+            self.publisher_respawn = self.create_publisher(Twist, '/respawn', 1)
+            msg_arr = Twist()
+            self.publisher_respawn.publish(msg_arr)
+        else:
+            self.switcher_publisher = self.create_publisher(Int32, '/gripper_switcher', 1)
+            msg = Int32()
+            msg.data = 1
+            self.switcher_publisher.publish(msg)
+
+            time.sleep(1)
+            msg = Int32()
+            msg.data = 2
+            self.switcher_publisher.publish(msg)
+
         self.timer = time.time()
-
-        self.state = OperationState.IDLE
-        self.observation_msg = PoseStamped()
-        self.start_pose = None
-
-        self.tfBuffer = tf2_ros.Buffer()
-        self.tfListener = tf2_ros.TransformListener(self.tfBuffer, self)
-
-        self.plotting_observations = []
-        self.plotting_actions = []
-
 
         self.publisher_joint_init = self.create_publisher(
             JointTrajectory, '/joint_trajectory_controller/joint_trajectory', 1)
@@ -206,8 +167,7 @@ class CmdVelPublisher(Node):
 
         self.joint_state.points = [point]
         self.joint_state.joint_names = self.joint_names
-
-        
+           
         # move arm to init pose
         call_ros2_service('joint_trajectory_controller',
                               'cartesian_motion_controller')
@@ -217,29 +177,17 @@ class CmdVelPublisher(Node):
         time.sleep(3)
         call_ros2_service('cartesian_motion_controller', 'joint_trajectory_controller')
         
+        self.tfBuffer = tf2_ros.Buffer()
+        self.tfListener = tf2_ros.TransformListener(self.tfBuffer, self)
 
-        if self.sim:
-            # on init open griper and move screwdriver on random position
-            self.gripper_msg = Float64MultiArray()
-            self.gripper_msg.data = [0.0]
-            self.publisher_gripper.publish(self.gripper_msg)
+        self.state = OperationState.IDLE
+        self.observation_msg = PoseStamped()
+        self.start_pose = None
 
-            self.publisher_respawn = self.create_publisher(Twist, '/respawn', 1)
-            msg_arr = Twist()
-            self.publisher_respawn.publish(msg_arr)
 
-        if not self.sim:
-            # open gripper
-            self.switcher_publisher = self.create_publisher(Int32, '/gripper_switcher', 1)
-            msg = Int32()
-            msg.data = 1
-            self.switcher_publisher.publish(msg)
-
-            time.sleep(1)
-            msg = Int32()
-            msg.data = 2
-            self.switcher_publisher.publish(msg)
-
+        self.plotting_observations = []
+        self.plotting_actions = []
+        
     
     def get_transform(self, target_frame, source_frame):
         try:
@@ -272,6 +220,10 @@ class CmdVelPublisher(Node):
         cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
         cv_image = cv2.resize(cv_image, (224, 224))
         self.image = cv_image
+        self.frames.append(self.image)
+        image_name = "/home/marija/exp-lerobot/examples/outputs/rollout_images/" + str(self.counter) + ".jpg"
+        cv2.imwrite(image_name, self.image)
+        self.counter +=1
           
     def publish_cmd_vel(self):
 
@@ -292,28 +244,15 @@ class CmdVelPublisher(Node):
 
     
         if self.state == OperationState.IDLE:
+            
             self.start_pose = self.observation_current_pose
             if self.start_pose  is not None:
                 self.state = OperationState.INFERENCE
                 self.timer = time.time()
 
         elif self.state == OperationState.INFERENCE:
-            # Prepare observation for the policy running in Pytorch
-            state = torch.from_numpy(np.array(self.observation_pose))
-            state = state.to(torch.float32).to(self.device, non_blocking=True).unsqueeze(0)
-            image = torch.from_numpy(self.image).to(torch.float32).permute(2, 0, 1).to(self.device, non_blocking=True).unsqueeze(0) / 255
-
-            # Create the policy input dictionary
-            observation = {
-                "observation.state": state,
-                "observation.image": image,
-            }
-
-            # Predict the next action with respect to the current observation
-            tick = time.time()
-            with torch.inference_mode():
-                self.action = self.policy.select_action(observation).squeeze(0).cpu().numpy()
-            tock = time.time()
+            
+            self.action = self.imitation.step(self.image, self.observation_pose)
             if self.action is None:
                 return
             
@@ -325,19 +264,20 @@ class CmdVelPublisher(Node):
             self.current_pose_relativ.pose.position.y = (float(self.action[1]) / 1.0) 
             self.current_pose_relativ.pose.position.z = (float(self.action[2]) / 2.5)
 
-            quat = t3d.euler.euler2quat((self.action[3] / 5.5), (self.action[4] / 6.5), (self.action[5] / 5.5))
+            quat = t3d.euler.euler2quat((self.action[3] / 1.5), (self.action[4] / 6.5), (self.action[5] / 1.5))
 
-            self.current_pose_relativ.pose.orientation.x = float(quat[1]) 
-            self.current_pose_relativ.pose.orientation.y = float(quat[2]) 
-            self.current_pose_relativ.pose.orientation.z = float(quat[3])
-            self.current_pose_relativ.pose.orientation.w = float(quat[0]) 
+            self.current_pose_relativ.pose.orientation.x = float(quat[1]) #0.0
+            self.current_pose_relativ.pose.orientation.y = float(quat[2]) #0.0
+            self.current_pose_relativ.pose.orientation.z = float(quat[3]) #0.0
+            self.current_pose_relativ.pose.orientation.w = float(quat[0]) #1.0
 
 
             current_pose_target = ros2numpy(self.current_pose_relativ.pose)
             target_rotation = ros2numpy(self.observation_current_pose.pose) @ current_pose_target
             target_rotation = target_rotation[:3, :3]
-            target_transform = ros2numpy(self.observation_current_pose.pose) @ current_pose_target
 
+            target_transform = ros2numpy(self.observation_current_pose.pose) @ current_pose_target
+            # print(target_transform)
 
             self.plotting_actions.append(target_transform[:3, 3])
             self.plotting_observations.append(self.observation_pose[:3])
@@ -348,26 +288,74 @@ class CmdVelPublisher(Node):
             self.start_pose.pose = pose
             self.current_pose.pose = pose
 
-            if self.observation_msg.pose.position.z < 0.12 or self.step > self.max_episode_steps: # 0.12 regular_value for picking
-                self.state = OperationState.END
+            if self.observation_msg.pose.position.z < 0.12: # 0.12 regular_value for picking
+                self.state = OperationState.OPEN_GRIPPER
+                self.timer = time.time()
+                # time.sleep(15)
+                self.get_logger().info('___________________________________ END ___________________________________')
+
+
 
             self.publisher_speed_limiter.publish(self.current_pose)
 
             self.step += 1
 
-        if self.state == OperationState.END:
-            plot_action_trajectory(self.sim, self.plotting_observations, self.plotting_actions)
+            if self.step > self.max_episode_steps:
+                plot_action_trajectory(self.sim, self.plotting_observations, self.plotting_actions)
+                self.state = OperationState.OPEN_GRIPPER
+                self.timer = time.time()
 
-            signal_msg  =Int32()
-            signal_msg.data = 1
-            self.end_signal_publisher.publish(signal_msg)
+        elif self.state == OperationState.OPEN_GRIPPER:
+            # open later because make noise
+            if not self.sim:
+                msg = Int32()
+                msg.data = 1
+                self.switcher_publisher.publish(msg)
 
-            self.get_logger().info(f"Finished publishing. Shutting down node...")
-            rclpy.shutdown()
-            exit(0)
-            self.get_logger().info('___________________________________ END ___________________________________')
+            if time.time() - self.timer > 1.5:
+                self.state = OperationState.GO_CLOSE
+                self.timer = time.time()
 
+        elif self.state == OperationState.GO_CLOSE:
+                self.observation_msg.pose.position.z = 0.085 # 0.085
+                self.publisher_speed_limiter.publish(self.observation_msg)
+                if time.time() - self.timer > 2.5:
+                    self.state = OperationState.CLOSE_GRIPPER
+                    self.timer  =time.time()
+        
+        elif self.state == OperationState.CLOSE_GRIPPER:
+            if self.sim:
+                self.gripper_msg.data = [-0.01]
+                self.publisher_gripper.publish(self.gripper_msg)
+            else:
+                msg = Int32()
+                msg.data = 0
+                self.switcher_publisher.publish(msg)
 
+            if time.time() -  self.timer > 1.5:
+                self.state = OperationState.PICK_UP
+                self.timer = time.time()
+        elif self.state == OperationState.PICK_UP:
+                self.observation_msg.pose.position.z = 0.29
+                self.publisher_speed_limiter.publish(self.observation_msg)
+                if time.time() - self.timer > 1.5:
+                    self.state = OperationState.END
+                    self.timer = time.time()
+
+        elif self.state == OperationState.END:
+
+            if time.time() - self.timer > 2.5:
+                if not self.sim:
+                    # shutdown gripper
+                    msg = Int32()
+                    msg.data = 2
+                    self.switcher_publisher.publish(msg)
+
+                self.get_logger().info(f"Finished publishing. Shutting down node...")
+                rclpy.shutdown()
+                exit(0)
+
+       
         if check_pose_stamped_values(self.current_pose_relativ):
             return
 
