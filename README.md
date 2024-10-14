@@ -12,7 +12,7 @@
 
 The Robo Imitate project allows you to:
 
-- Collect data in both real and simulated environments. Learn more here
+- Collect data in both real and simulated environments. Learn more [here](xarm_bringup/scripts/README.md)
 - Train a Diffusion Policy model. Learn more here
 - Evaluate the trained model. Learn more here
 
