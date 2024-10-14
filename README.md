@@ -22,7 +22,7 @@ You need to have Docker installed. If you have an Nvidia GPU, you need to additi
 
 
 ### Model evaluation
-You can download pretrain model and aditional files from this link. Downloaded model and files you need to put inside folder `imitation/outputs/train`.
+You can download pretrain model and aditional files from this link. Downloaded model and files you need to put inside folder `imitation/outputs/train`. If folder don't exist you need to create it.
 
 Inside `docker` folder run this command:
 - Build docker container

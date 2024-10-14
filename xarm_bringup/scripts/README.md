@@ -1,4 +1,4 @@
-Inside this foilder you can find diferent script for detalolection and robot teleoperation. This folder contaion:
+Inside this foilder you can find diferent script for detalolection and robot teleoperation. This folder contain:
 
 ```
  .scripts\
@@ -11,3 +11,4 @@ Inside this foilder you can find diferent script for detalolection and robot tel
     |-- sixd_speed_limiter
     |-- space_teleop
 ```
+
