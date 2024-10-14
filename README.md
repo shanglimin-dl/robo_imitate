@@ -10,14 +10,14 @@
 
 </br>
 
-Robo imitation projekt allow you:
-- Data collection in real and simulation environmet
-- Diffusion Policy model training and
+Robo imitate projekt allow you:
+- Data collection in real and simulated environmet (check here)
+- Diffusion Policy model training and (check here)
 - Evaluation trained model
 
 
 >[!IMPORTANT]  
-You need to have Docker installed. If you have an Nvidia GPU, you need to additionally follow this [guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html). You need to istall Isaac-Sim.
+You need to have Docker installed. If you have an Nvidia GPU, you need to additionally follow this [guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html). Additionaly, you need to istall Isaac-Sim If you want to use simulation. 
 
 
 ### Model evaluation
