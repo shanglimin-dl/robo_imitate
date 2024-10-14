@@ -8,7 +8,10 @@
 	<img src="./media/robo_imitate.png">
 </div>
 
-
+Robo imitation projekt allow you:
+- Data collection in real and simulation environmet
+- Diffusion Policy model training and
+- Evaluation trained model
 
 ### Model training
 
