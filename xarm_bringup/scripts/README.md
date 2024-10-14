@@ -15,13 +15,13 @@ Inside this foilder you can find diferent script for detalolection and robot tel
 
 ### Usage
 
-- <b>Simulated data collection<b>
+- **Simulated data collection**
 If you want to collect data in simulation you need to run scripts:
   1. episode_generator_picking
   2. episode_recorder --data_dir FILE_NAME
   
 
-- <b>Real data collection<b>
+- **Real data collection**
 If you want to collect real data you need to run scripts:
   1. episode_manager
   2. episode_recorder --data_dir FILE_NAME
@@ -30,7 +30,7 @@ If you want to collect real data you need to run scripts:
   Using episode_manager you can controll start end episode and break points in one episode.
 
 
-- <b>Data saving<b>
+- **Data saving**
 If you want to save data in properly format you need to run:
 ```sh
 ./save_parquet --data_path DATA_PATH
