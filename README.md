@@ -21,16 +21,16 @@ The Robo Imitate project allows you to:
 You need to have Docker installed. If you have an Nvidia GPU, you need to additionally follow this [guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html). Additionaly, you need to istall Isaac-Sim If you want to use simulation. 
 
 ### Installation
-Download our source code:
+- Download our source code:
 ```sh
-	git clone https://github.com/MarijaGolubovic/robo_imitate.git && cd robo_imitate/docker
+git clone https://github.com/MarijaGolubovic/robo_imitate.git && cd robo_imitate/docker
 ```
 
 - Build docker container
 ```sh
-	make build-pc run exec
+make build-pc run exec
 ```
-Build ROS 2 packages
+- Build ROS 2 packages
 ```sh
 colcon build --symlink-install && source ./install/local_setup.bash
 ```
