@@ -15,6 +15,39 @@ Robo imitation projekt allow you:
 - Diffusion Policy model training and
 - Evaluation trained model
 
+
+>[!IMPORTANT]  
+You need to have Docker installed. If you have an Nvidia GPU, you need to additionally follow this [guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html). You need to istall Isaac-Sim.
+
+
+### Model evaluation
+You can download pretrain model and aditional files from this link. Downloaded model and files you need to put inside folder `imitation/outputs/train`.
+
+Inside `docker` folder run this command:
+- Build docker container
+```sh
+make build-pc run exec
+```
+- Build ROS 2 packages
+```sh
+colcon build --symlink-install && source ./install/local_setup.bash
+```
+- Run ROS 2 controler
+```sh
+ros2 launch xarm_bringup lite6_cartesian_launch.py rviz:=false sim:=true
+```
+If you want to vizualize robot set `rviz` on true. If you want to use real enviroment set `sim` on false.
+
+- Open anather terminal and run docker
+```sh
+make exec
+```
+
+- Run model inside docker
+```sh
+cd src/robo_imitate && ./imitation/inference
+```
+
 ### Model training
 
 Inside `robo_imitate` directory run follow commands:
@@ -32,33 +65,4 @@ docker run -v $(pwd)/imitation/:/docker/app/imitation:Z --gpus all -it -e DATA_P
 
 ```sh
 python3 ./imitation/compute_stats --path imitation/data/2024_09_09_19_47_17.parquet  && python3 ./imitation/train_script --path imitation/data/2024_09_09_19_47_17.parquet  --epoch 1000
-```
-
-
-### Model evaluation
->[!IMPORTANT]  
-You need to have Docker installed. If you have an Nvidia GPU, you need to additionally follow this [guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html). You need to istall Isaac-Sim.
-
-- Build docker container
-```sh
-make build-pc run exec
-```
-- Build ROS 2 packages
-```sh
-colcon build --symlink-install && source ./install/local_setup.bash
-```
-- Run ROS 2 controler
-```sh
-ros2 launch xarm_bringup lite6_cartesian_launch.py rviz:=false sim:=true
-```
-If you want to vizualize robot set `rviz` on true.
-
-- Open anather terminal and run docker
-```sh
-make exec
-```
-
-- Run model inside docker
-```sh
-cd src/robo_imitate && ./imitation/inference
 ```
