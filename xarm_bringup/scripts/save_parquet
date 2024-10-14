@@ -146,6 +146,7 @@ def save_data_frame(path):
     df = pd.DataFrame(data)
     df.to_parquet(output_path, engine='pyarrow')
     print("File is saved on path: ", output_path)
+    print('If you want to train model, you need to move parquet file to folder `imitation/data`!')
 
 
 def load_hf_dataset_from_parquet(file_path):
@@ -156,14 +157,15 @@ def load_hf_dataset_from_parquet(file_path):
 def main():
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--filename', type=str, help='Name of data directory.')
+    parser.add_argument('--data_path', type=str, help='Path to data directory.')
 
     args = parser.parse_args()
 
-    DATA_FILE = 'DATA'
-
-    if args.filename:
-        DATA_FILE = args.filename
+    if args.filename is None:
+        print(f'[ERROR] You need to add data path!')
+        return
+    
+    DATA_FILE = args.filename
 
     file_path = os.path.abspath(os.getcwd()) + '/' + DATA_FILE
 
