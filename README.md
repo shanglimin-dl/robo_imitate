@@ -10,10 +10,11 @@
 
 </br>
 
-Robo imitate projekt allow you:
-- Data collection in real and simulated environmet (check here)
-- Diffusion Policy model training and (check here)
-- Evaluation trained model
+The Robo Imitate project allows you to:
+
+-Collect data in both real and simulated environments. Learn more here
+-Train a Diffusion Policy model. Learn more here
+-Evaluate the trained model. Learn more here
 
 
 >[!IMPORTANT]  
