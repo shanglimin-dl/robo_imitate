@@ -20,19 +20,26 @@ The Robo Imitate project allows you to:
 >[!IMPORTANT]  
 You need to have Docker installed. If you have an Nvidia GPU, you need to additionally follow this [guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html). Additionaly, you need to istall Isaac-Sim If you want to use simulation. 
 
+### Installation
+Download our source code:
+```sh
+	git clone https://github.com/MarijaGolubovic/robo_imitate.git && cd robo_imitate/docker
+```
+
+- Build docker container
+```sh
+	make build-pc run exec
+```
+Build ROS 2 packages
+```sh
+colcon build --symlink-install && source ./install/local_setup.bash
+```
 
 ### Model evaluation
 You can download pretrain model and aditional files from this link. Downloaded model and files you need to put inside folder `imitation/outputs/train`. If folder don't exist you need to create it.
 
-Inside `docker` folder run this command:
-- Build docker container
-```sh
-make build-pc run exec
-```
-- Build ROS 2 packages
-```sh
-colcon build --symlink-install && source ./install/local_setup.bash
-```
+
+Inside docker container run:
 - Run ROS 2 controler
 ```sh
 ros2 launch xarm_bringup lite6_cartesian_launch.py rviz:=false sim:=true
