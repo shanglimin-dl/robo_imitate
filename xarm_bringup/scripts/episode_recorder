@@ -79,7 +79,7 @@ class SaveTeleoperationData(Node):
 
 
         self.DATA_DIR = data_dir
-        print(self.DATA_DIR)
+        self.get_logger().info(self.DATA_DIR)
 
     def image_callback(self, msg):
         try:
@@ -174,6 +174,7 @@ def main(args=None):
     parser.add_argument('--data_dir', type=str, help='Name of data directory.')
 
     args = parser.parse_args()
+    print(args)
     data_dir = 'DATA'
     if args.data_dir is not None:
         data_dir = args.data_dir
