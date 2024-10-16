@@ -4,7 +4,7 @@
 |:-------------------------------------------------------------------:|:----------------------------------------------------:|
 | Object picking with imitation learning                         | Object picking when pose of object is randomized    |
 
-<div>
+<div align='center'>
 	<img src="./media/robo_imitate.png">
 </div>
 
