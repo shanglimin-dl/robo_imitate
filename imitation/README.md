@@ -13,6 +13,21 @@ Once you have collected the demonstrations, you can start training the model. If
 
 There are two ways to train the model:
 - Running an independent Docker container that executes all necessary scripts and outputs the model weights.
-- Running the training scripts inside the same Docker container where you execute the robot arm controller.
 
+Inside `robo_imitate` directory run follow commands:
+
+```sh 
+docker build --build-arg UID=$(id -u) -t imitation .
+```
+
+```sh
+docker run -v $(pwd)/imitation/:/docker/app/imitation:Z --gpus all -it -e DATA_PATH=imitation/data/real_env_data.parquet -e EPOCH=1000 imitation
+```
+
+- Running the training scripts inside the same Docker container where you execute the robot arm controller.
+Run this command inside the folder `src/robo_imitate`:
+
+```sh
+python3 ./imitation/compute_stats --path imitation/data/real_env_data.parquet  && python3 ./imitation/train_script --path imitation/data/real_env_data.parquet  --epoch 1000
+```
 
