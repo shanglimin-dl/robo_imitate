@@ -15,7 +15,8 @@ Inside this folder, you can find various scripts for data collection and robot t
 
 ```
 
->[!NOTE] We support two datasets in Parquet format, collected from both real and simulated environments. You can find these datasets inside the imitation/data folder. Currently, we support the collection of:
+>[!NOTE]
+ We support two datasets in Parquet format, collected from both real and simulated environments. You can find these datasets inside the imitation/data folder. Currently, we support the collection of:
   - **Images**: RGB images sized 224x224 pixels
   - **Current Pose and Actions**: Vectors containing six values in the format [x,y,z,yaw,pitch,roll].
 
