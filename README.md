@@ -13,7 +13,8 @@
 The Robo Imitate project allows you to:
 
 - Collect data in both real and simulated environments. Learn more [here](xarm_bringup/scripts/README.md)
-- Train and evaluate a Diffusion Policy model. Learn more here
+- Train and evaluate a Diffusion Policy model. Learn more [here](imitation/README.md)
+- Suport for Lite 6 robot arm. Learn more [here](xarm_bringup/README.md)
 
 
 >[!IMPORTANT]  
