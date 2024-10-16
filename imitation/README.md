@@ -1,7 +1,7 @@
 # Imitation Learning
 
 <div align='center'>
-    <img src="./media/training_and_evaluation.png">
+    <img src="../media/training_and_evaluation.png">
 </div>
 
 </br>
