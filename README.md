@@ -4,13 +4,13 @@
 |:-------------------------------------------------------------------:|:----------------------------------------------------:|
 | Object picking with imitation learning                         | Object picking when pose of object is randomized    |
 
-<div align="center">
+<div>
 	<img src="./media/robo_imitate.png">
 </div>
 
 </br>
 
-<div align="center">
+<div>
 
 # **RoboImitate Project**
 
