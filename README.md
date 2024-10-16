@@ -54,14 +54,14 @@ ros2 launch xarm_bringup lite6_cartesian_launch.py rviz:=false sim:=true
 ```
 If you want to vizualize robot set `rviz` on true. If you want to use real enviroment set `sim` on false.
 
-- Open anather terminal and run docker
+- Open another terminal and run docker
 ```sh
 make exec
 ```
 
 - Run model inside docker
 ```sh
-cd src/robo_imitate && ./imitation/inference
+./src/robo_imitate/imitation/inference
 ```
 
 ### Model training

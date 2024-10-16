@@ -17,7 +17,7 @@ Inside this folder, you can find various scripts for data collection and robot t
 
 >[!NOTE]
  We support two datasets in Parquet format, collected from both real and simulated environments. You can find these datasets inside the imitation/data folder. Currently, we support the collection of:
-  - **Images**: RGB images sized 224x224 pixels
+  - **Images**: RGB images sized 96x96 pixels
   - **Current Pose and Actions**: Vectors containing six values in the format [x,y,z,yaw,pitch,roll].
 
 If you want to change the data format, you can do so directly during data collection in the episode_recorder script or while saving in parquet format.
@@ -65,4 +65,4 @@ If you want to change the data format, you can do so directly during data collec
   ```sh
   ./save_parquet --data_path DATA_PATH
   ```
-  This will save your data in parquet format, ensuring efficient storage and compatibility for further processing.
+  This will save your data in parquet format, ensuring efficient storage and compatibility for further processing. Saved file you need to move inside `imitation/data` folder.
