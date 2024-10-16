@@ -82,3 +82,7 @@ docker run -v $(pwd)/imitation/:/docker/app/imitation:Z --gpus all -it -e DATA_P
 ```sh
 python3 ./imitation/compute_stats --path imitation/data/2024_09_09_19_47_17.parquet  && python3 ./imitation/train_script --path imitation/data/2024_09_09_19_47_17.parquet  --epoch 1000
 ```
+
+### Acknowledgment
+- Thank to LeRobot team for open sourcing LeRobot projects. 
+- Thanks to Cheng Chi, Zhenjia Xu and colleagues for open sourcing Diffusion policy
