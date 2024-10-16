@@ -51,9 +51,9 @@ Inside this folder, you can find various scripts for data collection and robot t
   - Using the episode_manager, you can control when an episode starts, ends, and where breakpoints occur during an episode.
 
 
-- **Data saving**
-To save the collected data in the proper format, run the following command:
-```sh
-./save_parquet --data_path DATA_PATH
-```
-This will save your data in parquet format, ensuring efficient storage and compatibility for further processing.
+#### **Data saving**
+  To save the collected data in the proper format, run the following command:
+  ```sh
+  ./save_parquet --data_path DATA_PATH
+  ```
+  This will save your data in parquet format, ensuring efficient storage and compatibility for further processing.
