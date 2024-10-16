@@ -25,7 +25,7 @@ The **RoboImitate** project supports imitation learning through a [**Diffusion P
 
 
 >[!IMPORTANT]  
-You need to have Docker installed. If you have an Nvidia GPU, you need to additionally follow this [guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html). Additionaly, you need to istall Isaac-Sim If you want to use simulation. 
+You need to have Docker installed. If you have an Nvidia GPU, you need to additionally follow this [guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html). Additionally, you need to istall Isaac-Sim If you want to use simulation. 
 
 ### Installation
 - Download our source code:
@@ -76,12 +76,12 @@ docker run -v $(pwd)/imitation/:/docker/app/imitation:Z --gpus all -it -e DATA_P
 ```
 
 >[!TIP]
- If you want to run model training inside docker, run this command inside the folder `src/robo_imitate`. Before that, you need to build the docker (see section "Model evaluation").. 
+ If you want to run model training inside docker, run this command inside the folder `src/robo_imitate`. Before that, you need to build the docker (see the [Installation](#installation) section for details).
 
 ```sh
 python3 ./imitation/compute_stats --path imitation/data/real_env_data.parquet  && python3 ./imitation/train_script --path imitation/data/real_env_data.parquet  --epoch 1000
 ```
 
 ### Acknowledgment
-- Thank to LeRobot team for open sourcing LeRobot projects. 
+- Thanks to LeRobot team for open sourcing LeRobot projects. 
 - Thanks to Cheng Chi, Zhenjia Xu and colleagues for open sourcing Diffusion policy
