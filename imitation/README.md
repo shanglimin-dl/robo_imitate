@@ -11,6 +11,9 @@ Inside this folder, you can find scripts for simple Diffusion model training and
 ## Model training
 Once you have collected the demonstrations, you can start training the model. If you modify the data format, you can configure the model in the script [config.py](imitation/common/config.py).  In this config file, you can also adjust additional parameters for the model. For more details, refer to the Diffusion Policy [paper](https://diffusion-policy.cs.columbia.edu/).
 
+>[!IMPORTANT]
+Before starting the training, you need to move the parquet file into the imitation/data folder and update the data file name in the command accordingly.
+
 There are two ways to train the model:
 - Running an independent Docker container that executes all necessary scripts and outputs the model weights.
 
