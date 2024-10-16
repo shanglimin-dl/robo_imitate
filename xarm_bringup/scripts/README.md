@@ -1,4 +1,4 @@
-Inside this foilder you can find diferent script for detalolection and robot teleoperation. This folder contain:
+Inside this folder, you can find various scripts for data collection and robot teleoperation. This folder contains:
 
 ```
   .scripts/
@@ -16,9 +16,15 @@ Inside this foilder you can find diferent script for detalolection and robot tel
 ### Usage
 
 - **Simulated data collection**
-If you want to collect data in simulation you need to run scripts:
-  1. episode_generator_picking
-  2. episode_recorder --data_dir FILE_NAME
+To collect data in a simulated environment, follow these steps:
+  1. Run the script to save the episode data:
+  ```sh
+  python3 episode_recorder.py --data_dir FILE_NAME
+  ```
+  2. Run the script to control the simulated robot:
+  ```sh
+  ./episode_generator_picking
+  ```
   
 
 - **Real data collection**
