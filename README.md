@@ -1,4 +1,4 @@
-# Imitation learning 
+# RoboImitate - Imitation learning project 
 
 | ![Lite6 Physical Teleoperation](./media/pick_object.gif)  | ![UR5e Webots Teleoperation](./media/move_object.gif) |
 |:-------------------------------------------------------------------:|:----------------------------------------------------:|
@@ -10,11 +10,22 @@
 
 </br>
 
-**RoboImitate** project supports imitation learning through a Diffusion Policy. The Diffusion Policy learns behavior by leveraging expert demonstrations. (We will soon publish a YouTube presentation for more details.) This repository allows you to:
+<div align="center">
 
-- Collect demonstration in both real and simulated environments. Learn more [here](xarm_bringup/scripts/README.md)
-- Train and evaluate a Diffusion Policy model. Learn more [here](imitation/README.md)
-- Suport for Lite 6 robot arm. Learn more [here](xarm_bringup/README.md)
+# **RoboImitate Project**
+
+The **RoboImitate** project supports imitation learning through a **Diffusion Policy**. This policy learns behavior by leveraging expert demonstrations.  
+*(Stay tuned for our upcoming YouTube presentation for more details!)*
+
+---
+
+## This repository allows you to:
+
+- **Collect demonstrations** in both real and simulated environments. [Learn more here](xarm_bringup/scripts/README.md).
+- **Train and evaluate** a Diffusion Policy model. [Learn more here](imitation/README.md).
+- **Support** the Lite 6 robot arm. [Learn more here](xarm_bringup/README.md).
+
+</div>
 
 
 >[!IMPORTANT]  
