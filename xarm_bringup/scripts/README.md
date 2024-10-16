@@ -15,11 +15,11 @@ Inside this folder, you can find various scripts for data collection and robot t
 
 ### Usage
 
-- **Simulated data collection**
+- **Simulated Data Collection**
 To collect data in a simulated environment, follow these steps:
 1. Run the script to save the episode data:
 ```sh
-python3 episode_recorder.py --data_dir FILE_NAME
+./episode_recorder --data_dir FILE_NAME
 ```
 2. Run the script to control the simulated robot:
 ```sh
@@ -27,13 +27,28 @@ python3 episode_recorder.py --data_dir FILE_NAME
 ```
   
 
-- **Real data collection**
-If you want to collect real data you need to run scripts:
-  1. episode_manager
-  2. episode_recorder --data_dir FILE_NAME
-  3. space_teleop/keyboard_teleop
+- **Real  Data Collection**
+To collect data from a real robot, use the following steps:
+1. Start the episode manager to manage data saving:
+```sh
+./episode_manager
+```
+2. Record the episode data:
+```sh
+./episode_recorder --data_dir FILE_NAME
+```
+3. Choose a teleoperation method to control the robot:
+ - Space Mouse Teleoperation:
+```sh
+./space_teleop
+```
+- Keyboard Teleoperation:
+```sh
+./keyboard_teleop
+```
 
-  Using episode_manager you can controll start end episode and break points in one episode.
+**Note:** 
+- Using the episode_manager, you can control when an episode starts, ends, and where breakpoints occur during an episode.
 
 
 - **Data saving**
