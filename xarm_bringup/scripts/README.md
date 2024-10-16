@@ -17,14 +17,14 @@ Inside this folder, you can find various scripts for data collection and robot t
 
 - **Simulated data collection**
 To collect data in a simulated environment, follow these steps:
-  1. Run the script to save the episode data:
-  ```sh
-  python3 episode_recorder.py --data_dir FILE_NAME
-  ```
-  2. Run the script to control the simulated robot:
-  ```sh
-  ./episode_generator_picking
-  ```
+1. Run the script to save the episode data:
+```sh
+python3 episode_recorder.py --data_dir FILE_NAME
+```
+2. Run the script to control the simulated robot:
+```sh
+./episode_generator_picking
+```
   
 
 - **Real data collection**
