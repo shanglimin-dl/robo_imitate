@@ -77,28 +77,28 @@ File will be saved in path `DATA_REAL/parquest_output`
 
 - Run commands:
 
-#Set mode need to call twice time
+# Set mode need to call twice time
 
-```sh
-   ros2 service call /xarm/set_mode xarm_msgs/srv/SetInt16 "{data: 2}"
-```
+   ```sh
+      ros2 service call /xarm/set_mode xarm_msgs/srv/SetInt16 "{data: 2}"
+   ```
 
-```sh
-   ros2 service call /xarm/set_mode xarm_msgs/srv/SetInt16 "{data: 2}"
-```
+   ```sh
+      ros2 service call /xarm/set_mode xarm_msgs/srv/SetInt16 "{data: 2}"
+   ```
 
-```sh
-   ros2 service call /xarm/set_state xarm_msgs/srv/SetInt16 "{data: 0}"
-```
+   ```sh
+      ros2 service call /xarm/set_state xarm_msgs/srv/SetInt16 "{data: 0}"
+   ```
 
 **To return in normal mode run commands:**
 
-```sh
-   ros2 service call /xarm/set_mode xarm_msgs/srv/SetInt16 "{data: 0}"
-```
+   ```sh
+      ros2 service call /xarm/set_mode xarm_msgs/srv/SetInt16 "{data: 0}"
+   ```
 
-```sh
-   ros2 service call /xarm/set_state xarm_msgs/srv/SetInt16 "{data: 0}"
-```
-- After this step need to run launch file again
+   ```sh
+      ros2 service call /xarm/set_state xarm_msgs/srv/SetInt16 "{data: 0}"
+   ```
+   - After this step need to run launch file again
 
