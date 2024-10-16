@@ -11,10 +11,7 @@
 </br>
 
 <div align='center'>
-
-# **RoboImitate Project**
-
-The **RoboImitate** project supports imitation learning through a **Diffusion Policy**. This policy learns behavior by leveraging expert demonstrations. *(Stay tuned for our upcoming YouTube presentation for more details!)*
+The **RoboImitate** project supports imitation learning through a **Diffusion Policy**. This policy learns behavior using expert demonstrations. *(Stay tuned for our upcoming YouTube presentation for more details!)*
 
 ---
 
