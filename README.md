@@ -16,7 +16,7 @@ The **RoboImitate** project supports imitation learning through a **Diffusion Po
 
 ---
 
-## This repository allows you to:
+#### This repository allows you to:
 
 - **Collect demonstrations** in both real and simulated environments. [Learn more here](xarm_bringup/scripts/README.md).
 - **Train and evaluate** a Diffusion Policy model. [Learn more here](imitation/README.md).
