@@ -31,3 +31,20 @@ Run this command inside the folder `src/robo_imitate`:
 python3 ./imitation/compute_stats --path imitation/data/real_env_data.parquet  && python3 ./imitation/train_script --path imitation/data/real_env_data.parquet  --epoch 1000
 ```
 
+## Model training
+Inside docker container run:
+- Run ROS 2 controler
+```sh
+ros2 launch xarm_bringup lite6_cartesian_launch.py rviz:=false sim:=true
+```
+If you want to vizualize robot set `rviz` on true. If you want to use real enviroment set `sim` on false.
+
+- Open another terminal and run docker
+```sh
+make exec
+```
+
+- Run model inside docker
+```sh
+./src/robo_imitate/imitation/pick_screwdriver
+```
