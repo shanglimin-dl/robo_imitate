@@ -15,8 +15,8 @@ Inside this folder, you can find various scripts for data collection and robot t
 
 ### Usage
 
-- **Simulated Data Collection**
-  To collect data in a simulated environment, follow these steps:
+#### **Simulated Data Collection**
+To collect data in a simulated environment, follow these steps:
   1. Run the script to save the episode data:
   ```sh
   ./episode_recorder --data_dir FILE_NAME
@@ -25,9 +25,9 @@ Inside this folder, you can find various scripts for data collection and robot t
   ```sh
   ./episode_generator_picking
   ```
-  
+    
 
-- **Real  Data Collection**
+#### **Real  Data Collection**
 To collect data from a real robot, use the following steps:
 1. Start the episode manager to manage data saving:
 ```sh
