@@ -13,9 +13,9 @@ Inside this folder, you can find various scripts for data collection and robot t
 
 ```
 
-### Usage
+## Usage
 
-#### **Simulated Data Collection**
+### **Simulated Data Collection**
   To collect data in a simulated environment, follow these steps:
   1. Run the script to save the episode data:
   ```sh
@@ -27,7 +27,7 @@ Inside this folder, you can find various scripts for data collection and robot t
   ```
     
 
-#### **Real  Data Collection**
+### **Real  Data Collection**
   To collect data from a real robot, use the following steps:
   1. Start the episode manager to manage data saving:
   ```sh
@@ -51,7 +51,7 @@ Inside this folder, you can find various scripts for data collection and robot t
   - Using the episode_manager, you can control when an episode starts, ends, and where breakpoints occur during an episode.
 
 
-#### **Data saving**
+### **Data saving**
   To save the collected data in the proper format, run the following command:
   ```sh
   ./save_parquet --data_path DATA_PATH
