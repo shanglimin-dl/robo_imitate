@@ -15,7 +15,7 @@ import cv2
 import os
 import argparse
 
-def get_action_from_observations(observations, segment):
+def get_action_from_observations(observations):
     last_observation_msg = observations[-1]
     last_observation = ros2numpy(last_observation_msg)
 
@@ -30,8 +30,7 @@ def get_action_from_observations(observations, segment):
 
         rotation = t3d.euler.mat2euler(action)
 
-        pose = np.concatenate((translation, rotation))
-        pose = np.append(pose, segment)        
+        pose = np.concatenate((translation, rotation))     
 
         action_str = '[{}]'.format(', '.join(map(str, pose))) + '\n'
 
@@ -75,7 +74,6 @@ class SaveTeleoperationData(Node):
         self.images_counter = 0
 
         self.observations = []
-        self.segment = 0
 
 
         self.DATA_DIR = data_dir
@@ -98,7 +96,6 @@ class SaveTeleoperationData(Node):
             self.save_episode(self.DATA_DIR)
             self.images_counter = 0
             self.observations = []
-            self.segment = 0
             self.get_logger().info(
                 f'---------------------------------{msg.data}')
 
@@ -109,12 +106,10 @@ class SaveTeleoperationData(Node):
         if msg.data == 0:
             if len(self.observations) == 0:
                 return
-            actions = get_action_from_observations(self.observations, self.segment)
+            actions = get_action_from_observations(self.observations)
             self.action_filename.writelines(actions)
             print(len(actions))
-            self.observations = []
-            self.segment+=1
-            
+            self.observations = []            
 
     def save_episode(self, dir_path):
         date = datetime.now()
@@ -159,7 +154,7 @@ class SaveTeleoperationData(Node):
         euler_angles_o = t3d.euler.quat2euler(quat)
 
         observation = (
-            f"[{x_pos}, {y_pos}, {z_pos}, {euler_angles_o[0]}, {euler_angles_o[1]}, {euler_angles_o[2]}, {self.segment}]\n")
+            f"[{x_pos}, {y_pos}, {z_pos}, {euler_angles_o[0]}, {euler_angles_o[1]}, {euler_angles_o[2]}]\n")
 
         image_name = self.images_folder + '/' + \
             str(self.images_counter) + '.jpg'

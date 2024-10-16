@@ -43,7 +43,7 @@ def load_episodes(path):
 
 
 def delete_rotation(episode_content):
-    """ If save full pose, you can delete rotation from dataset in current version"""
+    """ If save additional elements, you can delete them from dataset in current version"""
     num_frames = len(episode_content)
     actions = []
 
@@ -100,10 +100,10 @@ def save_data_frame(path):
         images = load_images(image_folder)
 
         file_content = open(file_path, 'r').readlines()
-        file_content = delete_rotation(file_content)
+        file_content = delete(file_content)
 
         observation_file_content = open(observation_file_path, 'r').readlines()
-        observation_file_content = delete_rotation(observation_file_content)
+        observation_file_content = delete(observation_file_content)
         file_length = len(file_content)
 
         frame_index = 0
