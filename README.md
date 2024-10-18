@@ -44,7 +44,7 @@ colcon build --symlink-install && source ./install/local_setup.bash
 
 ### Model evaluation
 >[!NOTE] 
-You can download pretrain model and aditional files from this link. Downloaded model and files you need to put inside folder `imitation/outputs/train`. If folder don't exist you need to create it.
+You can download pretrain model and aditional files from this [link](https://drive.google.com/drive/folders/1x2Mamae9xvImDJb821TEb221UaC_fTUV?usp=drive_link). Downloaded model and files you need to put inside folder `imitation/outputs/train`. If folder don't exist you need to create it.
 
 
 Inside docker container run:
