@@ -16,8 +16,9 @@ For the simulation environment, set `sim` to true. When `rviz` is set to true, t
 
 
 # Enable manual mode
-If you want to 
-   - Run commands:
+If you want to physically move the robot joints, you need to follow these rules.
+
+- Run commands:
 
    ## Set mode need to call twice time
 
