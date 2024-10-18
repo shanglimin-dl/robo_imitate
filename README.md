@@ -12,7 +12,7 @@
 
 <div>
 
-The **RoboImitate** project supports imitation learning through a [**Diffusion Policy**](https://diffusion-policy.cs.columbia.edu/). This policy learns behavior using expert demonstrations. *(Stay tuned for our upcoming YouTube presentation for more details!)*
+The **RoboImitate** project supports imitation learning through a [**Diffusion Policy**](https://diffusion-policy.cs.columbia.edu/){:target="_blank" rel="noopener"}. This policy learns behavior using expert demonstrations. *(Stay tuned for our upcoming YouTube presentation for more details!)*
 
 
 #### This repository allows you to:
