@@ -46,6 +46,7 @@ colcon build --symlink-install && source ./install/local_setup.bash
 >[!NOTE] 
 You can download pretrain model and aditional files from this [link](https://drive.google.com/drive/folders/1x2Mamae9xvImDJb821TEb221UaC_fTUV?usp=sharing). Downloaded model and files you need to put inside folder `imitation/outputs/train`. If folder don't exist you need to create it.
 
+- Run Isaac-Sim or Lite 6 robot arm
 
 Inside docker container run:
 - Run ROS 2 controler
