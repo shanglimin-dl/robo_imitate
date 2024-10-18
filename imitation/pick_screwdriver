@@ -88,10 +88,6 @@ class PickScrewdriver(Node):
             self.current_pose_callback,
             1)
         self.current_pose_subscriber
-        
-        self.output_directory = Path("imitation/outputs/example")
-        if not os.path.exists(self.output_directory):
-            os.mkdir(self.output_directory)
 
         self.imitation = Imitation()
         

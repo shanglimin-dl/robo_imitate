@@ -42,7 +42,7 @@ def load_episodes(path):
     return episode_name
 
 
-def delete_rotation(episode_content):
+def delete(episode_content):
     """ If save additional elements, you can delete them from dataset in current version"""
     num_frames = len(episode_content)
     actions = []

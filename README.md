@@ -61,7 +61,7 @@ make exec
 
 - Run model inside docker
 ```sh
-./src/robo_imitate/imitation/pick_screwdriver
+ cd src/robo_imitate && ./imitation/pick_screwdriver
 ```
 
 ### Model training
