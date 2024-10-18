@@ -24,14 +24,14 @@ docker build --build-arg UID=$(id -u) -t imitation .
 ```
 
 ```sh
-docker run -v $(pwd)/imitation/:/docker/app/imitation:Z --gpus all -it -e DATA_PATH=imitation/data/real_env_data.parquet -e EPOCH=1000 imitation
+docker run -v $(pwd)/imitation/:/docker/app/imitation:Z --gpus all -it -e DATA_PATH=imitation/data/sim_env_data.parquet -e EPOCH=1000 imitation
 ```
 
 - Running the training scripts inside the same Docker container where you execute the robot arm controller.
 Run this command inside the folder `src/robo_imitate`:
 
 ```sh
-python3 ./imitation/compute_stats --path imitation/data/real_env_data.parquet  && python3 ./imitation/train_script --path imitation/data/real_env_data.parquet  --epoch 1000
+python3 ./imitation/compute_stats --path imitation/data/sim_env_data.parquet  && python3 ./imitation/train_script --path imitation/data/sim_env_data.parquet  --epoch 1000
 ```
 
 ## Model training
@@ -49,5 +49,5 @@ make exec
 
 - Run model inside docker
 ```sh
-./src/robo_imitate/imitation/pick_screwdriver
+ cd src/robo_imitate && ./imitation/pick_screwdriver --sim
 ```
