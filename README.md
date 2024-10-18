@@ -27,6 +27,13 @@ The **RoboImitate** project supports imitation learning through a [**Diffusion P
 >[!IMPORTANT]  
 You need to have Docker installed. If you have an Nvidia GPU, you need to additionally follow this [guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html). Additionally, you need to istall Isaac-Sim If you want to use simulation. 
 
+
+#### Install docker
+```sh
+sudo apt install git make curl
+curl -sSL https://get.docker.com | sh && sudo usermod -aG docker $USER
+```
+
 ### Installation
 - Download our source code:
 ```sh
