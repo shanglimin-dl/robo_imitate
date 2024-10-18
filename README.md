@@ -81,7 +81,7 @@ docker run -v $(pwd)/imitation/:/docker/app/imitation:Z --gpus all -it -e DATA_P
  If you want to run model training inside docker, run this command inside the folder `src/robo_imitate`. Before that, you need to build the docker (see the [Installation](#installation) section for details).
 
 ```sh
-python3 ./imitation/compute_stats --path imitation/data/real_env_data.parquet  && python3 ./imitation/train_script --path imitation/data/real_env_data.parquet  --epoch 1000
+python3 ./imitation/compute_stats --path imitation/data/sim_env_data.parquet  && python3 ./imitation/train_script --path imitation/data/sim_env_data.parquet  --epoch 1000
 ```
 
 ### Acknowledgment
