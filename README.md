@@ -74,7 +74,7 @@ docker build --build-arg UID=$(id -u) -t imitation .
 ```
 
 ```sh
-docker run -v $(pwd)/imitation/:/docker/app/imitation:Z --gpus all -it -e DATA_PATH=imitation/data/sim_env_data.parquet -e EPOCH=10 imitation
+docker run -v $(pwd)/imitation/:/docker/app/imitation:Z --gpus all -it -e DATA_PATH=imitation/data/sim_env_data.parquet -e EPOCH=1000 imitation
 ```
 
 >[!TIP]
