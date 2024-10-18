@@ -229,7 +229,7 @@ class PickScrewdriver(Node):
             self.current_pose_relativ.header.frame_id = 'gripper_link_base'
             self.current_pose_relativ.pose.position.x = (float(self.action[0]) / 1.5)
             self.current_pose_relativ.pose.position.y = (float(self.action[1]) / 1.0) 
-            self.current_pose_relativ.pose.position.z = (float(self.action[2]) / 2.5)
+            self.current_pose_relativ.pose.position.z = (float(self.action[2]) / 2.0)
 
             quat = t3d.euler.euler2quat((self.action[3] / 1.5), (self.action[4] / 6.5), (self.action[5] / 1.5))
 

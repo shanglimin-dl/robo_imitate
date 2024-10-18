@@ -61,8 +61,9 @@ make exec
 
 - Run model inside docker
 ```sh
- cd src/robo_imitate && ./imitation/pick_screwdriver
+ cd src/robo_imitate && ./imitation/pick_screwdriver --sim
 ```
+If you run in real environment you need to remove `--sim` from command.
 
 ### Model training
 Inside `robo_imitate` directory run follow commands:
