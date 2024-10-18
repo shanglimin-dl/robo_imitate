@@ -9,7 +9,9 @@ The `xarm_bringup` package provides tools and scripts for simulating and control
 ```
 For the simulation environment, set `sim` to true. When `rviz` is set to true, the RViz tool will automatically launch, allowing for robot visualization and manual control through the GUI.
 
+<div align='center'>
 ![Lite6 Physical Teleoperation](../media/rviz.gif) 
+</div>
 
 
 # Enable manual mode
