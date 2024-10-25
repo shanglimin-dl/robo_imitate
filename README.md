@@ -1,4 +1,4 @@
-# RoboImitate - Imitation learning project 
+# Imitation learning with ROS 2
 
 | ![Object picking physics env](./media/pick_object.gif)  | ![Object picking physics env](./media/move_object.gif) |
 |:-------------------------------------------------------------------:|:----------------------------------------------------:|
