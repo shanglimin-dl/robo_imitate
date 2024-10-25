@@ -1,6 +1,11 @@
 # RoboImitate - Imitation learning project 
 
-| ![Lite6 Physical Teleoperation](./media/pick_object.gif)  | ![UR5e Webots Teleoperation](./media/move_object.gif) |
+| ![Object picking physics env](./media/pick_object.gif)  | ![Object picking physics env](./media/move_object.gif) |
+|:-------------------------------------------------------------------:|:----------------------------------------------------:|
+| Object picking with imitation learning                         | Object picking when pose of object is randomized    |
+
+
+| ![Object picking in IsaacSim](./media/object_picking_sim.gif)  | ![Object picking in IsaacSim](./media/object_picking_sim.gif) |
 |:-------------------------------------------------------------------:|:----------------------------------------------------:|
 | Object picking with imitation learning                         | Object picking when pose of object is randomized    |
 
