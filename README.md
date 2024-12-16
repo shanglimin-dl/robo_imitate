@@ -4,7 +4,7 @@
 |:-------------------------------------------------------------------:|:----------------------------------------------------:|
 
 
-| ![Object picking in IsaacSim](./media/object_picking_sim.gif)  | ![Object picking in IsaacSim](./media/object_picking_random_move.gif) |
+| ![Object picking in IsaacSim](./media/move_object.gif)  | ![Object picking in IsaacSim](./media/webots_pick_blue.gif) |
 |:-------------------------------------------------------------------:|:----------------------------------------------------:|
 | Object picking with imitation learning                         | Object picking when pose of object is randomized    |
 
