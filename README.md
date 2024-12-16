@@ -1,10 +1,10 @@
 # Imitation learning with ROS 2
 
-| ![Object picking physics env](./media/pick_object.gif)  | ![Object picking physics env](./media/webots.gif) |
+| ![Object picking physics env](./media/pick_object.gif)  | ![Object picking physics env](./media/move_object.gif) |
 |:-------------------------------------------------------------------:|:----------------------------------------------------:|
 
 
-| ![Object picking in IsaacSim](./media/move_object.gif)  | ![Object picking in IsaacSim](./media/webots_pick_blue.gif) |
+| ![Object picking in IsaacSim](./media/object_picking_sim.gif)  | ![Object picking in IsaacSim](./media/object_picking_random_move.gif) |
 |:-------------------------------------------------------------------:|:----------------------------------------------------:|
 | Object picking with imitation learning                         | Object picking when pose of object is randomized    |
 
@@ -96,6 +96,5 @@ python3 ./imitation/compute_stats --path imitation/data/sim_env_data.parquet  &&
 ```
 
 ### Acknowledgment
-- This project is done in collaboration with [@SpesRobotics](https://spes.ai/).
 - Thanks to LeRobot team for open sourcing LeRobot projects. 
 - Thanks to Cheng Chi, Zhenjia Xu and colleagues for open sourcing Diffusion policy
