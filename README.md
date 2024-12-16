@@ -1,6 +1,6 @@
 # Imitation learning with ROS 2
 
-| ![Object picking physics env](./media/pick_object.gif)  | ![Object picking physics env](./media/webots_pick_blue.gif) |
+| ![Object picking physics env](./media/pick_object.gif)  | ![Object picking physics env](./media/webots.gif) |
 |:-------------------------------------------------------------------:|:----------------------------------------------------:|
 
 
