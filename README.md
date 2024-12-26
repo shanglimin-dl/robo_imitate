@@ -96,5 +96,6 @@ python3 ./imitation/compute_stats --path imitation/data/sim_env_data.parquet  &&
 ```
 
 ### Acknowledgment
+- This project is done in collaboration with [@SpesRobotics](https://spes.ai/).
 - Thanks to LeRobot team for open sourcing LeRobot projects. 
 - Thanks to Cheng Chi, Zhenjia Xu and colleagues for open sourcing Diffusion policy
