@@ -14,40 +14,43 @@ DATA_DIR = Path(os.environ["DATA_DIR"]) if "DATA_DIR" in os.environ else None
 CODEBASE_VERSION = "v1.4"
 
 def hf_transform_to_torch(items_dict):
-    from PIL import Image
+    """Convert items from the HuggingFace dataset to PyTorch tensors."""
     import io
-    for key in items_dict:
-        first_item = items_dict[key][0]
-        
-        if key == 'observation.image':
-            first_item = items_dict[key][0]['bytes']
-            # print(first_item)
-            # print('------------')
-            first_item = Image.open(io.BytesIO(first_item))
+    import ast
+    from PIL import Image
 
-           
-        if isinstance(first_item, PILImage.Image):
-            to_tensor = transforms.ToTensor()
-            for item in items_dict[key]:
-                
-                item = item['bytes']
-                items_dict[key] = to_tensor(Image.open(io.BytesIO(item)))
-                items_dict[key] = items_dict[key].unsqueeze(0)
-                
-                
-        elif key == 'observation.state' or key == 'action':
-                import numpy as np
-                for next_line  in items_dict[key]:
-                    next_line = next_line[1:-1].split(',')
-                    next_line = [float(item) for item in next_line]
-                    next_line = np.array(next_line)
+    batched = isinstance(items_dict["observation.image"], list)
 
-                    items_dict[key] = torch.tensor(next_line, dtype=torch.float32)
-                    items_dict[key] = items_dict[key].unsqueeze(0)
-        else:
+    if batched:
+        images, states, actions = [], [], []
+        for img_dict, state_str, action_str in zip(
+            items_dict["observation.image"], items_dict["observation.state"], items_dict["action"]
+        ):
+            img = Image.open(io.BytesIO(img_dict["bytes"]))
+            images.append(transforms.ToTensor()(img))
+            states.append(torch.tensor(ast.literal_eval(state_str), dtype=torch.float32))
+            actions.append(torch.tensor(ast.literal_eval(action_str), dtype=torch.float32))
+        items_dict["observation.image"] = images
+        items_dict["observation.state"] = states
+        items_dict["action"] = actions
+        for key, value in list(items_dict.items()):
+            if key in {"observation.image", "observation.state", "action"}:
+                continue
+            items_dict[key] = [torch.tensor(v) for v in value]
+    else:
+        img = Image.open(io.BytesIO(items_dict["observation.image"]["bytes"]))
+        items_dict["observation.image"] = transforms.ToTensor()(img)
+        items_dict["observation.state"] = torch.tensor(
+            ast.literal_eval(items_dict["observation.state"]), dtype=torch.float32
+        )
+        items_dict["action"] = torch.tensor(
+            ast.literal_eval(items_dict["action"]), dtype=torch.float32
+        )
+        for key, value in list(items_dict.items()):
+            if key in {"observation.image", "observation.state", "action"}:
+                continue
+            items_dict[key] = torch.tensor(value)
 
-            items_dict[key] = torch.tensor(items_dict[key])
-            
     return items_dict
 
 
@@ -65,6 +68,18 @@ def load_hf_dataset(repo_id, version, root, split) -> datasets.Dataset:
 
 
 def calculate_episode_data_index_for_custom_dataset(hf_dataset: datasets.Dataset) -> Dict[str, torch.Tensor]:
+    """Return tensor indices delimiting episodes in the dataset."""
+
+    # Temporarily disable any transform to avoid KeyError when only loading
+    # the ``episode_index`` column.
+    original_format = hf_dataset._format_type
+    original_kwargs = dict(hf_dataset._format_kwargs)
+    original_columns = hf_dataset._format_columns
+    original_output_all_columns = hf_dataset._output_all_columns
+
+    # Disable formatting and transforms
+    hf_dataset.reset_format()
+
     episode_data_index = {"from": [], "to": []}
 
     current_episode = None
@@ -74,6 +89,12 @@ def calculate_episode_data_index_for_custom_dataset(hf_dataset: datasets.Dataset
             "from": torch.tensor([]),
             "to": torch.tensor([]),
         }
+        hf_dataset.set_format(
+            original_format,
+            columns=original_columns,
+            output_all_columns=original_output_all_columns,
+            **original_kwargs,
+        )
         return episode_data_index
 
     for idx, episode_idx in enumerate(hf_dataset["episode_index"]):
@@ -93,6 +114,12 @@ def calculate_episode_data_index_for_custom_dataset(hf_dataset: datasets.Dataset
     episode_data_index["from"] = torch.tensor(episode_data_index["from"])
     episode_data_index["to"] = torch.tensor(episode_data_index["to"])
 
+    hf_dataset.set_format(
+        original_format,
+        columns=original_columns,
+        output_all_columns=original_output_all_columns,
+        **original_kwargs,
+    )
     return episode_data_index
 
 
